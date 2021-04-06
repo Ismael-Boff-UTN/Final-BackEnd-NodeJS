@@ -28,6 +28,7 @@ class Server {
     this.app.use(express.json());
   }
   routes() {
+    this.app.use("/", require("../routes/default"));
     this.app.use("/api/usuarios", require("../routes/usuarios"));
     this.app.use("/api/auth", require("../routes/auth"));
     this.app.use("/api/categorias", require("../routes/categorias"));
