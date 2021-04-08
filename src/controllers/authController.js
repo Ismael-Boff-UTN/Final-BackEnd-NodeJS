@@ -24,7 +24,7 @@ const login = async (req, res = response) => {
     const validarPassword = bcryptjs.compareSync(password, usuario.password);
     if (!validarPassword) {
       return res.status(400).json({
-        msg: "Email o Contraseña Incorrecto! - Password",
+        msg: "Email o Contraseña Incorrecto!",
       });
     }
 
@@ -59,7 +59,7 @@ const googleSignIn = async (req, res = response) => {
         apellido,
         password: "xD",
         email,
-       
+
         img,
 
         google: true,
@@ -88,7 +88,25 @@ const googleSignIn = async (req, res = response) => {
   }
 };
 
+const renewToken = async (req, res = response) => {
+  //Generar El JWT (JSON Web Token)
+
+  const { _id, nombre } = req.usuario;
+  const usuario = req.usuario;
+  const token = await generarJWT(_id);
+
+  res.json({
+    ok: true,
+    msg: "Token Renewed",
+    token,
+    _id,
+    nombre,
+    usuario
+  });
+};
+
 module.exports = {
   login,
   googleSignIn,
+  renewToken,
 };
