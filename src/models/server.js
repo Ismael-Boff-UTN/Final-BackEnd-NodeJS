@@ -32,6 +32,7 @@ class Server {
     this.app.use("/api/usuarios", require("../routes/usuarios"));
     this.app.use("/api/auth", require("../routes/auth"));
     this.app.use("/api/categorias", require("../routes/categorias"));
+    this.app.use("/api/articulos", require("../routes/articulos"));
   }
 
   listen() {
