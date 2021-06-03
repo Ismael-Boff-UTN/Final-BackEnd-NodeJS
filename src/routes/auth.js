@@ -1,8 +1,9 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { login, googleSignIn, renewToken } = require("../controllers/authController");
+const { login, googleSignIn, renewToken, adminLogin } = require("../controllers/authController");
 const { validarJWT } = require("../middlewares/validar-jwt");
 const { validarCampos } = require("../middlewares/validarCampos");
+const { tieneRole } = require("../middlewares/validar-roles");
 
 const router = Router();
 
@@ -15,6 +16,16 @@ router.post(
     validarCampos,
   ],
   login
+);
+
+router.post(
+  "/admin-login",
+  [
+    check("email", "El Email Es Requerido").isEmail(),
+    check("password", "La Contraseña Es Requerida").not().isEmpty(),
+    validarCampos,
+  ],
+  adminLogin
 );
 
 router.post(

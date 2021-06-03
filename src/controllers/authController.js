@@ -43,6 +43,51 @@ const login = async (req, res = response) => {
   }
 };
 
+const adminLogin = async (req, res = response) => {
+  const { email, password } = req.body;
+  try {
+    //Verificar Email
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+      return res.status(400).json({
+        msg: "Email o Contraseña Incorrecto!",
+      });
+    }
+    //Verificar Si El Usuario Esta Activo (No SoftDeleted)
+    if (!usuario.estado) {
+      return res.status(400).json({
+        msg: "Email o Contraseña Incorrecto!",
+      });
+    }
+    //Verificar La Contraseña
+    const validarPassword = bcryptjs.compareSync(password, usuario.password);
+    if (!validarPassword) {
+      return res.status(400).json({
+        msg: "Email o Contraseña Incorrecto!",
+      });
+    }
+
+    if (usuario.rol === "ADMIN_ROLE" || usuario.rol === "COCINERO_ROLE" || usuario.rol === "DELIVERY_ROLE" || usuario.rol === "CAJERO_ROLE" ) {
+      //Generar El JWT (JSON Web Token)
+      const token = await generarJWT(usuario.id);
+
+      res.json({
+        msg: "Login OK",
+        usuario,
+        token,
+      });
+    } else {
+      return res.json({
+        msg: `Usuario No valido ${usuario.rol}`,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      msg: "Error De Login, Revisar Credenciales",
+    });
+  }
+};
+
 const googleSignIn = async (req, res = response) => {
   const { id_token } = req.body;
 
@@ -77,7 +122,7 @@ const googleSignIn = async (req, res = response) => {
     const token = await generarJWT(usuario.id);
 
     res.json({
-      status : true,
+      status: true,
       msg: "Google OK",
       usuario,
       token,
@@ -102,12 +147,13 @@ const renewToken = async (req, res = response) => {
     token,
     _id,
     nombre,
-    usuario
+    usuario,
   });
 };
 
 module.exports = {
   login,
   googleSignIn,
+  adminLogin,
   renewToken,
 };
