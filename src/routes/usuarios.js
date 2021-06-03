@@ -23,7 +23,7 @@ const router = Router();
 //   Obtener Todos Los Usuarios
 // Tipo Publico
 //================================
-router.get("/", getUsuarios);
+router.get("/",[validarJWT], getUsuarios);
 
 
 //================================
@@ -33,6 +33,7 @@ router.get("/", getUsuarios);
 router.post(
   "/",
   [
+    validarJWT,
     check("email").custom(esEmailvalido),
     check("nombre", "Nombre Requerido").not().isEmpty(),
     check("password", "Password No Valido").isLength({ min: 6 }),

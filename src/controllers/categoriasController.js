@@ -7,7 +7,7 @@ const getCategorias = async (req, res = response) => {
   //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
   const { limite = null, desde = 0 } = req.query;
   //estado : true, Retorna solo los usuarios que no esten softdeleteados
-  const categorias = await Categoria.find({ estado: true })
+  const categorias = await Categoria.find()
     .skip(Number(desde))
     .limit(Number(limite));
   res.json({
@@ -25,7 +25,6 @@ const getCategoriasByID = async (req, res = response) => {
   res.json({
     msg: `Categoria Obtenida`,
     categoria: categoria,
-    
   });
 };
 
@@ -50,24 +49,25 @@ const postCategorias = async (req, res = response) => {
   });
 };
 
-const putCategorias = async (req, res = response) =>{
-    res.json({
-        msg: `Categoria Editada`,
-      
-      });
-}
+const putCategorias = async (req, res = response) => {
+  res.json({
+    msg: `Categoria Editada`,
+  });
+};
 
 //SoftDelete
-const deleteCategorias = async (req, res=response) =>{
-    res.json({
-        msg: `Categoria Eliminada`,
-        
-      });
-}
+const deleteCategorias = async (req, res = response) => {
+  const { id } = req.params;
+  const categoria = await Categoria.findByIdAndUpdate(id, { estado: false });
+
+  res.json({
+    msg: `Categoria ${categoria.nombre}, Eliminada!`,
+  });
+};
 module.exports = {
   getCategorias,
   getCategoriasByID,
   postCategorias,
   putCategorias,
-  deleteCategorias
+  deleteCategorias,
 };
