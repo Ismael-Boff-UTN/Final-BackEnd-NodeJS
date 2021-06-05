@@ -15,7 +15,7 @@ const dbConnection = async () => {
     console.log("DB ONLINE : SUCCESS");
   } catch (error) {
     console.log(error);
-    throw new Error("DB ONLINE : FAILED");
+    throw new Error("DB ONLINE : FAILED : ",error);
   }
 };
 

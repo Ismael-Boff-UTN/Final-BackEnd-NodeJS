@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const ArticuloInsumoSchema = Schema({
+const IngredienteSchema = Schema({
   denominacion: {
     type: String,
     required: [true, "La Denominación Es Requerida"],
@@ -25,10 +25,14 @@ const ArticuloInsumoSchema = Schema({
     type: String,
     required: [true, "La Unidad De Medida Es Requerida"],
   },
-  esInsumo: {
+  estado: {
     type: Boolean,
-    required: [true, "Se Necesita Saber Si Es Insumo"],
+    default: true,
+  },
+  creadoPor: {
+    type: Object,
+    default: true,
   },
 });
 
-module.exports = model("roles", ArticuloInsumoSchema);
+module.exports = model("ingrediente", IngredienteSchema);

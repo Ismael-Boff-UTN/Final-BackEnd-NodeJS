@@ -1,19 +1,24 @@
-const {Schema, model} = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const ArticuloManufacturadoDetalleSchema = Schema({
-cantidad:{
-    type:Number,
-    required:[true,'La Cantidad Es Requerida'],
-    default: 1
-    
-},
-unidadMedida:{
-    type:String,
-    required:[true,'La Unidad De Medida Es Requerida'],
-    default : "Kg"
-    
-}
+  denominacionIngrediente: {
+    type: String,
+    required: [true, "La Denominacion Es Requerida"],
+    default: 1,
+  },
+  cantidad: {
+    type: Number,
+    required: [true, "La Cantidad Es Requerida"],
+    default: 1,
+  },
+  unidadMedida: {
+    type: String,
+    required: [true, "La Unidad De Medida Es Requerida"],
+    default: "gr",
+  },
+});
 
-})
-
-module.exports = model('articuloManufacturadoDetalle', ArticuloManufacturadoDetalleSchema);
+module.exports = model(
+  "articuloManufacturadoDetalle",
+  ArticuloManufacturadoDetalleSchema
+);
