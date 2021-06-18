@@ -16,6 +16,22 @@ const getArticulos = async (req, res = response) => {
     articulos,
   });
 };
+
+const getArticulosAdmin = async (req, res = response) => {
+  //Si No Se Pasa Un Limite (null) Retorna TODOS Los Articulos
+  //Ej. http://localhost:4000/api/articulos?limite=5&desde=4
+  const { limite = null, desde = 0 } = req.query;
+  //estado : true, Retorna solo los articulos que no esten softdeleteados
+  const articulos = await Articulo.find()
+    .skip(Number(desde))
+    .limit(Number(limite));
+  res.json({
+    status: true,
+    msg: "Articulos Obtenidos",
+    totalRegistros: articulos.length,
+    articulos,
+  });
+};
 const getArticuloByID = async (req, res = response) => {
   const { id } = req.params;
 
@@ -115,6 +131,7 @@ const deleteArticulo = async (req, res = response) => {
 
 module.exports = {
   getArticulos,
+  getArticulosAdmin,
   getArticuloByID,
   postArticulo,
   putArticulo,

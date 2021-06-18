@@ -31,6 +31,7 @@ const UsuarioSchema = Schema({
   },
   img: {
     type: String,
+    required : false,
     default: "https://img.icons8.com/fluent/48/000000/user-male-circle.png"
   },
   rol: {

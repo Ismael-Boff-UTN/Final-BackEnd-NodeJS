@@ -22,8 +22,9 @@ const getUsuarios = async (req, res = response) => {
 
 //FUNCION POST DEL USUARIO
 const postUsuarios = async (req, res = response) => {
-  const { nombre, email, password, rol, apellido, telefono,} = req.body;
-  const usuario = new Usuario({ nombre, email, password, rol,apellido,telefono, domicilio:req.body.domicilio});
+  const { nombre, email, password, rol, apellido, telefono,img} = req.body;
+  console.log(img);
+  const usuario = new Usuario({ nombre, email, password, rol,apellido,telefono, domicilio:req.body.domicilio, img});
   //Verificar Si El Email Existe Usando Mi Helper Pesonalizado
   esEmailvalido(email);
   //Encriptar Contraseña

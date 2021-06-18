@@ -7,6 +7,21 @@ const getCategorias = async (req, res = response) => {
   //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
   const { limite = null, desde = 0 } = req.query;
   //estado : true, Retorna solo los usuarios que no esten softdeleteados
+  const categorias = await Categoria.find({estado : true})
+    .skip(Number(desde))
+    .limit(Number(limite));
+  res.json({
+    msg: "Lista De Categorias",
+    totalRegistros: categorias.length,
+    categorias: categorias,
+  });
+};
+
+const getCategoriasAdmin = async (req, res = response) => {
+  //Si No Se Pasa Un Limite (null) Retorna TODOS Los Usuarios
+  //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
+  const { limite = null, desde = 0 } = req.query;
+  //estado : true, Retorna solo los usuarios que no esten softdeleteados
   const categorias = await Categoria.find()
     .skip(Number(desde))
     .limit(Number(limite));
@@ -66,6 +81,7 @@ const deleteCategorias = async (req, res = response) => {
 };
 module.exports = {
   getCategorias,
+  getCategoriasAdmin,
   getCategoriasByID,
   postCategorias,
   putCategorias,

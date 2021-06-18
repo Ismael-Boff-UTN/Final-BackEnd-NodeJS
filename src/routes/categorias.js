@@ -5,6 +5,7 @@ const { tieneRole } = require("../middlewares/validar-roles");
 const { validarCampos } = require("../middlewares/validarCampos");
 const {
   postCategorias,
+  getCategoriasAdmin,
   getCategorias,
   getCategoriasByID,
   putCategorias,
@@ -16,6 +17,12 @@ const router = Router();
 
 //Obtener Todas Las Categorias - Tipo Publico
 router.get("/", [], getCategorias);
+
+router.get(
+  "/admin",
+  [validarJWT, tieneRole("ADMIN_ROLE"), validarCampos],
+  getCategoriasAdmin
+);
 
 //Obtener Una Categoria Por ID - Tipo Publico
 router.get(

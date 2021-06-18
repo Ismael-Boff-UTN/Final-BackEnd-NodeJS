@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const {
   getArticulos,
+  getArticulosAdmin,
   getArticuloByID,
   postArticulo,
   putArticulo,
@@ -16,6 +17,11 @@ const router = Router();
 //Public Access
 //GET ALL ARTICLES
 router.get("/", [validarCampos], getArticulos);
+router.get(
+  "/admin",
+  [validarJWT, tieneRole("ADMIN_ROLE"), validarCampos],
+  getArticulosAdmin
+);
 
 //GET ONE ARTICLE BY ID
 router.get("/:id", [validarCampos], getArticuloByID);
