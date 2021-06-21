@@ -97,6 +97,25 @@ const postArticulo = async (req, res = response) => {
 };
 const putArticulo = async (req, res = response) => {
   const { id } = req.params;
+  const {
+    tiempoEstimadoCocina,
+    denominacion,
+    precioVenta,
+    imagen,
+    esManufacturado,
+  } = req.body;
+
+  const data = {
+    tiempoEstimadoCocina,
+    denominacion,
+    precioVenta,
+    imagen,
+    articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
+    esManufacturado,
+  };
+
+  const articulo = await Articulo.findByIdAndUpdate(id, data);
+
   res.json({
     status: true,
     msg: "Articulo Actualizado",

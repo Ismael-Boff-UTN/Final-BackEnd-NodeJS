@@ -42,6 +42,7 @@ router.post(
     validarJWT,
     tieneRole("ADMIN_ROLE"),
     check("nombre", "El Nombre Es Obligtorio").not().isEmpty(),
+    check("img", "La Imagen Es Obligatoria").not().isEmpty(),
     validarCampos,
   ],
   postCategorias
@@ -55,6 +56,7 @@ router.put(
     check("id", "No Es Un ID Valido De Mongo").isMongoId(),
     check("id").custom(existeIDCategoria),
     check("nombre", "El Nombre Es Obligtorio").not().isEmpty(),
+    check("img", "La Imagen Es Obligatoria").not().isEmpty(),
     validarCampos,
   ],
   putCategorias

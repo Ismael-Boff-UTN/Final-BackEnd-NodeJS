@@ -7,7 +7,7 @@ const getCategorias = async (req, res = response) => {
   //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
   const { limite = null, desde = 0 } = req.query;
   //estado : true, Retorna solo los usuarios que no esten softdeleteados
-  const categorias = await Categoria.find({estado : true})
+  const categorias = await Categoria.find({ estado: true })
     .skip(Number(desde))
     .limit(Number(limite));
   res.json({
@@ -45,6 +45,7 @@ const getCategoriasByID = async (req, res = response) => {
 
 const postCategorias = async (req, res = response) => {
   const nombre = req.body.nombre.toUpperCase();
+  const {img} = req.body;
   const categoriaDB = await Categoria.findOne({ nombre });
   if (categoriaDB) {
     return res.status(400).json({
@@ -54,6 +55,7 @@ const postCategorias = async (req, res = response) => {
   //Si No Existe Se Crea
   const data = {
     nombre,
+    img,
   };
   const categoria = new Categoria(data);
   //Lo Guardo En La Base
@@ -65,19 +67,46 @@ const postCategorias = async (req, res = response) => {
 };
 
 const putCategorias = async (req, res = response) => {
+  const { id } = req.params;
+  const nombre = req.body.nombre.toUpperCase();
+  const { img } = req.body;
+
+  const data ={
+    nombre, img
+  }
+
+  const categoria = await Categoria.findByIdAndUpdate(id, data);
   res.json({
-    msg: `Categoria Editada`,
+    status: true,
+    msg: "Categoria Actualizada Correctamente!",
+    categoria,
   });
 };
 
 //SoftDelete
 const deleteCategorias = async (req, res = response) => {
   const { id } = req.params;
-  const categoria = await Categoria.findByIdAndUpdate(id, { estado: false });
+  const categoriaEncontrado = await Categoria.findById(id);
 
-  res.json({
-    msg: `Categoria ${categoria.nombre}, Eliminada!`,
-  });
+  if (categoriaEncontrado.estado === true) {
+    const categoria = await Categoria.findByIdAndUpdate(id, {
+      estado: false,
+    });
+
+    res.status(200).json({
+      status: true,
+      msg: `Categoria : ${categoria.nombre}, Eliminadoa!`,
+    });
+  } else {
+    const categoria = await Categoria.findByIdAndUpdate(id, {
+      estado: true,
+    });
+
+    res.status(200).json({
+      status: true,
+      msg: `Categoria : ${categoria.nombre}, Reestrablecida!`,
+    });
+  }
 };
 module.exports = {
   getCategorias,
