@@ -64,10 +64,20 @@ const postIngrediente = async (req, res = response) => {
 };
 const putIngrediente = async (req, res = response) => {
   const { id } = req.params;
+  const {
+    denominacion,
+    precioCompra,
+    precioVenta,
+    stockActual,
+    stockMinimo,
+    unidadMedida,
+    estado,
+  } = req.body;
+
+  const ingrediente = await Ingrediente.findByIdAndUpdate(id, req.body);
   res.json({
-    status: true,
-    msg: "Articulo Actualizado",
-    id,
+    msg: "Ingrediente Actualizado Correctamente!",
+    ingrediente,
   });
 };
 const deleteIngrediente = async (req, res = response) => {
