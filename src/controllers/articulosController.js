@@ -143,7 +143,7 @@ const deleteArticulo = async (req, res = response) => {
 
     res.status(200).json({
       status: true,
-      msg: `Articulo : ${articulo.denominacion}, Reestrablecido!`,
+      msg: `Articulo : ${articulo.denominacion}, Reestablecido!`,
     });
   }
 };
