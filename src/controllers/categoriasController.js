@@ -1,4 +1,10 @@
 const { response } = require("express");
+const path = require("path");
+const fs = require("fs");
+require("../config/config");
+//Autenticacion Cloudinary
+const cloudinary = require("cloudinary").v2;
+cloudinary.config(process.env.CLOUDINARY_URL);
 const Categoria = require("../models/categoria");
 
 //FUNCION GET DE CATEGORIAS
@@ -44,36 +50,53 @@ const getCategoriasByID = async (req, res = response) => {
 };
 
 const postCategorias = async (req, res = response) => {
-  const nombre = req.body.nombre.toUpperCase();
-  const {img} = req.body;
-  const categoriaDB = await Categoria.findOne({ nombre });
-  if (categoriaDB) {
-    return res.status(400).json({
-      msg: `La Categoria ${nombre}, Ya Existe!`,
+  try {
+    const nombre = req.body.nombre.toUpperCase();
+    const { img } = req.body;
+    //Se Sube La Imagen A Cloudinary
+    const imgLink = await cloudinary.uploader.upload(img, {
+      folder: "BuenSabor/Categorias_Pictures",
     });
+
+    const categoriaDB = await Categoria.findOne({ nombre });
+    if (categoriaDB) {
+      return res.status(400).json({
+        msg: `La Categoria ${nombre}, Ya Existe!`,
+      });
+    }
+
+    const imgCloudinary = imgLink.secure_url;
+
+    data = {
+      nombre,
+      img: imgCloudinary,
+    };
+
+    const categoria = new Categoria(data);
+    //Lo Guardo En La Base
+    await categoria.save();
+    res.status(201).json({
+      msg: "Insertado Con Exito",
+      categoria,
+    });
+  } catch (error) {
+    //console.log(error);
   }
-  //Si No Existe Se Crea
-  const data = {
-    nombre,
-    img,
-  };
-  const categoria = new Categoria(data);
-  //Lo Guardo En La Base
-  await categoria.save();
-  res.status(201).json({
-    msg: "Insertado Con Exito",
-    categoria,
-  });
 };
 
 const putCategorias = async (req, res = response) => {
   const { id } = req.params;
   const nombre = req.body.nombre.toUpperCase();
   const { img } = req.body;
-
-  const data ={
-    nombre, img
-  }
+  //Se Sube La Imagen A Cloudinary
+  const imgLink = await cloudinary.uploader.upload(img, {
+    folder: "BuenSabor/Categorias_Pictures",
+  });
+  const imgCloudinary = imgLink.secure_url;
+  const data = {
+    nombre,
+    img: imgCloudinary,
+  };
 
   const categoria = await Categoria.findByIdAndUpdate(id, data);
   res.json({

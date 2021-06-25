@@ -1,6 +1,7 @@
 const roles = require("../models/rol");
 const Usuario = require("../models/usuario");
 const Categoria = require('../models/categoria');
+const Articulo = require('../models/articulo');
 
 //Valida Que El Rol Ingresado Exista En La DB
 const esRolValido = async (rol = "") => {
@@ -32,9 +33,17 @@ const existeIDCategoria = async (id = "") => {
   }
 };
 
+const existeIDArticulo = async (id = "") => {
+  const existe = await Articulo.findById(id);
+  if (!existe) {
+    throw new Error(`El ID ${id} No Existe!!`);
+  }
+};
+
 module.exports = {
   esRolValido,
   esEmailvalido,
   existeIDUsuario,
   existeIDCategoria,
+  existeIDArticulo,
 };

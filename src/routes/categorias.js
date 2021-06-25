@@ -42,7 +42,7 @@ router.post(
     validarJWT,
     tieneRole("ADMIN_ROLE"),
     check("nombre", "El Nombre Es Obligtorio").not().isEmpty(),
-    check("img", "La Imagen Es Obligatoria").not().isEmpty(),
+    //check("img", "La Imagen Es Obligatoria").not().isEmpty(),
     validarCampos,
   ],
   postCategorias

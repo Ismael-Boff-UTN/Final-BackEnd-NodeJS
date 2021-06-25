@@ -1,4 +1,8 @@
 const { response } = require("express");
+//Autenticacion Cloudinary
+require("../config/config");
+const cloudinary = require("cloudinary").v2;
+cloudinary.config(process.env.CLOUDINARY_URL);
 const Articulo = require("../models/articulo");
 
 const getArticulos = async (req, res = response) => {
@@ -53,6 +57,12 @@ const postArticulo = async (req, res = response) => {
     esManufacturado,
   } = req.body;
 
+  //Se Sube La Imagen A Cloudinary
+  const imgLink = await cloudinary.uploader.upload(imagen, {
+    folder: "BuenSabor/Articulos_Pictures",
+  });
+  const imgCloudinary = imgLink.secure_url;
+
   const usuario = req.usuario;
   const creadoPor = {
     usuario: usuario.nombre + " " + usuario.apellido,
@@ -65,7 +75,7 @@ const postArticulo = async (req, res = response) => {
       tiempoEstimadoCocina,
       denominacion,
       precioVenta,
-      imagen,
+      imagen: imgCloudinary,
       articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
       esManufacturado,
       creadoPor,
@@ -82,7 +92,7 @@ const postArticulo = async (req, res = response) => {
       tiempoEstimadoCocina,
       denominacion,
       precioVenta,
-      imagen,
+      imagen: imgCloudinary,
       esManufacturado,
       creadoPor,
     });
@@ -105,11 +115,17 @@ const putArticulo = async (req, res = response) => {
     esManufacturado,
   } = req.body;
 
+  //Se Sube La Imagen A Cloudinary
+  const imgLink = await cloudinary.uploader.upload(imagen, {
+    folder: "BuenSabor/Articulos_Pictures",
+  });
+  const imgCloudinary = imgLink.secure_url;
+
   const data = {
     tiempoEstimadoCocina,
     denominacion,
     precioVenta,
-    imagen,
+    imagen: imgCloudinary,
     articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
     esManufacturado,
   };
