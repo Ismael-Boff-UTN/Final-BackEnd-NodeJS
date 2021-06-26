@@ -26,7 +26,7 @@ class Server {
     this.app.use(cors());
     //ParseJSON
     this.app.use(express.json({ limit: "50mb" }));
-    this.app.use(express.urlencoded({ limit: "50mb" }));
+    this.app.use(express.urlencoded({ extended: "50mb" }));
   }
   routes() {
     this.app.use("/", require("../routes/default"));

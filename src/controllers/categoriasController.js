@@ -1,10 +1,5 @@
 const { response } = require("express");
-const path = require("path");
-const fs = require("fs");
-require("../config/config");
-//Autenticacion Cloudinary
-const cloudinary = require("cloudinary").v2;
-cloudinary.config(process.env.CLOUDINARY_URL);
+const { subirImagenCloudinary } = require("../helpers/subir-archivo");
 const Categoria = require("../models/categoria");
 
 //FUNCION GET DE CATEGORIAS
@@ -53,10 +48,6 @@ const postCategorias = async (req, res = response) => {
   try {
     const nombre = req.body.nombre.toUpperCase();
     const { img } = req.body;
-    //Se Sube La Imagen A Cloudinary
-    const imgLink = await cloudinary.uploader.upload(img, {
-      folder: "BuenSabor/Categorias_Pictures",
-    });
 
     const categoriaDB = await Categoria.findOne({ nombre });
     if (categoriaDB) {
@@ -65,7 +56,11 @@ const postCategorias = async (req, res = response) => {
       });
     }
 
-    const imgCloudinary = imgLink.secure_url;
+    //Se Sube La Imagen A Cloudinary
+    const imgCloudinary = await subirImagenCloudinary(
+      img,
+      "BuenSabor/Categorias_Pictures"
+    );
 
     data = {
       nombre,
@@ -88,11 +83,11 @@ const putCategorias = async (req, res = response) => {
   const { id } = req.params;
   const nombre = req.body.nombre.toUpperCase();
   const { img } = req.body;
-  //Se Sube La Imagen A Cloudinary
-  const imgLink = await cloudinary.uploader.upload(img, {
-    folder: "BuenSabor/Categorias_Pictures",
-  });
-  const imgCloudinary = imgLink.secure_url;
+
+  const imgCloudinary = await subirImagenCloudinary(
+    img,
+    "BuenSabor/Categorias_Pictures"
+  );
   const data = {
     nombre,
     img: imgCloudinary,

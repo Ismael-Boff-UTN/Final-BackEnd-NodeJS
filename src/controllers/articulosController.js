@@ -1,8 +1,5 @@
 const { response } = require("express");
-//Autenticacion Cloudinary
-require("../config/config");
-const cloudinary = require("cloudinary").v2;
-cloudinary.config(process.env.CLOUDINARY_URL);
+const { subirImagenCloudinary } = require("../helpers/subir-archivo");
 const Articulo = require("../models/articulo");
 
 const getArticulos = async (req, res = response) => {
@@ -25,7 +22,7 @@ const getArticulosAdmin = async (req, res = response) => {
   //Si No Se Pasa Un Limite (null) Retorna TODOS Los Articulos
   //Ej. http://localhost:4000/api/articulos?limite=5&desde=4
   const { limite = null, desde = 0 } = req.query;
-  //estado : true, Retorna solo los articulos que no esten softdeleteados
+
   const articulos = await Articulo.find()
     .skip(Number(desde))
     .limit(Number(limite));
@@ -57,11 +54,10 @@ const postArticulo = async (req, res = response) => {
     esManufacturado,
   } = req.body;
 
-  //Se Sube La Imagen A Cloudinary
-  const imgLink = await cloudinary.uploader.upload(imagen, {
-    folder: "BuenSabor/Articulos_Pictures",
-  });
-  const imgCloudinary = imgLink.secure_url;
+  const imgCloudinary = await subirImagenCloudinary(
+    imagen,
+    "BuenSabor/Articulos_Pictures"
+  );
 
   const usuario = req.usuario;
   const creadoPor = {
@@ -115,11 +111,10 @@ const putArticulo = async (req, res = response) => {
     esManufacturado,
   } = req.body;
 
-  //Se Sube La Imagen A Cloudinary
-  const imgLink = await cloudinary.uploader.upload(imagen, {
-    folder: "BuenSabor/Articulos_Pictures",
-  });
-  const imgCloudinary = imgLink.secure_url;
+  const imgCloudinary = await subirImagenCloudinary(
+    imagen,
+    "BuenSabor/Articulos_Pictures"
+  );
 
   const data = {
     tiempoEstimadoCocina,
