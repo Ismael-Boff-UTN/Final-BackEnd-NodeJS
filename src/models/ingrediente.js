@@ -33,6 +33,10 @@ const IngredienteSchema = Schema({
     type: Object,
     default: true,
   },
+  editadoPor: {
+    type: Object,
+    default: true,
+  },
 });
 
 module.exports = model("ingrediente", IngredienteSchema);

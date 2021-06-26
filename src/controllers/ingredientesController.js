@@ -74,7 +74,25 @@ const putIngrediente = async (req, res = response) => {
     estado,
   } = req.body;
 
-  const ingrediente = await Ingrediente.findByIdAndUpdate(id, req.body);
+  const usuario = req.usuario;
+  const editadoPor = {
+    usuario: usuario.nombre + " " + usuario.apellido,
+    id: usuario._id,
+    fechaEdicion: new Date(),
+  };
+
+  const data = {
+    denominacion,
+    precioCompra,
+    precioVenta,
+    stockActual,
+    stockMinimo,
+    unidadMedida,
+    estado,
+    editadoPor
+  }
+
+  const ingrediente = await Ingrediente.findByIdAndUpdate(id, data);
   res.json({
     msg: "Ingrediente Actualizado Correctamente!",
     ingrediente,
