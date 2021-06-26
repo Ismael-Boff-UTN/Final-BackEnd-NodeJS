@@ -1,7 +1,4 @@
-require("../config/config");
 const mongoose = require("mongoose");
-
-
 
 const dbConnection = async () => {
   try {
@@ -12,10 +9,10 @@ const dbConnection = async () => {
       useFindAndModify: false,
     });
 
-    console.log("DB ONLINE : SUCCESS");
+    console.log("Data Base Status : Connection SUCCESS :D");
   } catch (error) {
     console.log(error);
-    throw new Error("DB ONLINE : FAILED : ",error);
+    throw new Error("Data Base Status : Connection FAILED :c : ", error);
   }
 };
 

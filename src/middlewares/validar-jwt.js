@@ -1,4 +1,4 @@
-require("../config/config");
+
 const { response } = require("express");
 const jwt = require("jsonwebtoken");
 const Usuario = require("../models/usuario");

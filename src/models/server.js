@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const cors = require("cors");
 const { dbConnection } = require("../database/configdb");
 
@@ -40,7 +41,7 @@ class Server {
 
   listen() {
     this.app.listen(this.port, () => {
-      console.log("Server On PORT ==> ", this.port);
+      console.log("Server Running On PORT ==> " , this.port);
     });
   }
 }
