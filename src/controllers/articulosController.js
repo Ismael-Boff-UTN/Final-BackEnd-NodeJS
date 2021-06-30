@@ -3,159 +3,189 @@ const { subirImagenCloudinary } = require("../helpers/subir-archivo");
 const Articulo = require("../models/articulo");
 
 const getArticulos = async (req, res = response) => {
-  //Si No Se Pasa Un Limite (null) Retorna TODOS Los Articulos
-  //Ej. http://localhost:4000/api/articulos?limite=5&desde=4
-  const { limite = null, desde = 0 } = req.query;
-  //estado : true, Retorna solo los articulos que no esten softdeleteados
-  const articulos = await Articulo.find({ estado: true })
-    .skip(Number(desde))
-    .limit(Number(limite));
-  res.json({
-    status: true,
-    msg: "Articulos Obtenidos",
-    totalRegistros: articulos.length,
-    articulos,
-  });
+  try {
+    //Si No Se Pasa Un Limite (null) Retorna TODOS Los Articulos
+    //Ej. http://localhost:4000/api/articulos?limite=5&desde=4
+    const { limite = null, desde = 0 } = req.query;
+    //estado : true, Retorna solo los articulos que no esten softdeleteados
+    const articulos = await Articulo.find({ estado: true })
+      .skip(Number(desde))
+      .limit(Number(limite));
+    res.status(200).json({
+      status: true,
+      msg: "Articulos Obtenidos",
+      totalRegistros: articulos.length,
+      articulos,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 };
 
 const getArticulosAdmin = async (req, res = response) => {
-  //Si No Se Pasa Un Limite (null) Retorna TODOS Los Articulos
-  //Ej. http://localhost:4000/api/articulos?limite=5&desde=4
-  const { limite = null, desde = 0 } = req.query;
+  try {
+    //Si No Se Pasa Un Limite (null) Retorna TODOS Los Articulos
+    //Ej. http://localhost:4000/api/articulos?limite=5&desde=4
+    const { limite = null, desde = 0 } = req.query;
 
-  const articulos = await Articulo.find()
-    .skip(Number(desde))
-    .limit(Number(limite));
-  res.json({
-    status: true,
-    msg: "Articulos Obtenidos",
-    totalRegistros: articulos.length,
-    articulos,
-  });
+    const articulos = await Articulo.find()
+      .skip(Number(desde))
+      .limit(Number(limite));
+    res.status(200).json({
+      status: true,
+      msg: "Articulos Obtenidos",
+      totalRegistros: articulos.length,
+      articulos,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 };
 const getArticuloByID = async (req, res = response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const articulo = await Articulo.findById(id);
+    const articulo = await Articulo.findById(id);
 
-  res.json({
-    status: true,
-    msg: `Articulo Obtenido`,
-    articulo,
-  });
+    res.status(200).json({
+      status: true,
+      msg: `Articulo Obtenido`,
+      articulo,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 };
 
 const postArticulo = async (req, res = response) => {
-  const {
-    tiempoEstimadoCocina,
-    denominacion,
-    precioVenta,
-    imagen,
-    esManufacturado,
-  } = req.body;
+  try {
+    const {
+      tiempoEstimadoCocina,
+      denominacion,
+      precioVenta,
+      imagen,
+      esManufacturado,
+    } = req.body;
 
-  const imgCloudinary = await subirImagenCloudinary(
-    imagen,
-    "BuenSabor/Articulos_Pictures"
-  );
+    const imgCloudinary = await subirImagenCloudinary(
+      imagen,
+      "BuenSabor/Articulos_Pictures"
+    );
 
-  const usuario = req.usuario;
-  const creadoPor = {
-    usuario: usuario.nombre + " " + usuario.apellido,
-    id: usuario._id,
-    fechaCreacion: new Date(),
-  };
+    const usuario = req.usuario;
+    const creadoPor = {
+      usuario: usuario.nombre + " " + usuario.apellido,
+      id: usuario._id,
+      fechaCreacion: new Date(),
+    };
 
-  if (esManufacturado === true) {
-    const articulo = new Articulo({
+    if (esManufacturado === true) {
+      const articulo = new Articulo({
+        tiempoEstimadoCocina,
+        denominacion,
+        precioVenta,
+        imagen: imgCloudinary,
+        articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
+        esManufacturado,
+        creadoPor,
+      });
+
+      await articulo.save();
+      res.status(200).json({
+        status: true,
+        msg: "Articulo Creado",
+        articulo,
+      });
+    } else {
+      const articulo = new Articulo({
+        tiempoEstimadoCocina,
+        denominacion,
+        precioVenta,
+        imagen: imgCloudinary,
+        esManufacturado,
+        creadoPor,
+      });
+
+      await articulo.save();
+      res.status(200).json({
+        status: true,
+        msg: "Articulo Creado",
+        articulo,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+const putArticulo = async (req, res = response) => {
+  try {
+    const { id } = req.params;
+    const {
+      tiempoEstimadoCocina,
+      denominacion,
+      precioVenta,
+      imagen,
+      esManufacturado,
+    } = req.body;
+
+    const imgCloudinary = await subirImagenCloudinary(
+      imagen,
+      "BuenSabor/Articulos_Pictures"
+    );
+
+    const data = {
       tiempoEstimadoCocina,
       denominacion,
       precioVenta,
       imagen: imgCloudinary,
       articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
       esManufacturado,
-      creadoPor,
-    });
+    };
 
-    await articulo.save();
+    await Articulo.findByIdAndUpdate(id, data);
+
     res.status(200).json({
       status: true,
-      msg: "Articulo Creado",
-      articulo,
+      msg: "Articulo Actualizado",
+      id,
     });
-  } else {
-    const articulo = new Articulo({
-      tiempoEstimadoCocina,
-      denominacion,
-      precioVenta,
-      imagen: imgCloudinary,
-      esManufacturado,
-      creadoPor,
-    });
-
-    await articulo.save();
-    res.status(200).json({
-      status: true,
-      msg: "Articulo Creado",
-      articulo,
-    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
   }
 };
-const putArticulo = async (req, res = response) => {
-  const { id } = req.params;
-  const {
-    tiempoEstimadoCocina,
-    denominacion,
-    precioVenta,
-    imagen,
-    esManufacturado,
-  } = req.body;
-
-  const imgCloudinary = await subirImagenCloudinary(
-    imagen,
-    "BuenSabor/Articulos_Pictures"
-  );
-
-  const data = {
-    tiempoEstimadoCocina,
-    denominacion,
-    precioVenta,
-    imagen: imgCloudinary,
-    articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
-    esManufacturado,
-  };
-
-  const articulo = await Articulo.findByIdAndUpdate(id, data);
-
-  res.json({
-    status: true,
-    msg: "Articulo Actualizado",
-    id,
-  });
-};
 const deleteArticulo = async (req, res = response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const articuloEncontrado = await Articulo.findById(id);
+    const articuloEncontrado = await Articulo.findById(id);
 
-  if (articuloEncontrado.estado === true) {
-    const articulo = await Articulo.findByIdAndUpdate(id, {
-      estado: false,
-    });
+    if (articuloEncontrado.estado === true) {
+      const articulo = await Articulo.findByIdAndUpdate(id, {
+        estado: false,
+      });
 
-    res.status(200).json({
-      status: true,
-      msg: `Articulo : ${articulo.denominacion}, Eliminado!`,
-    });
-  } else {
-    const articulo = await Articulo.findByIdAndUpdate(id, {
-      estado: true,
-    });
+      res.status(200).json({
+        status: true,
+        msg: `Articulo : ${articulo.denominacion}, Eliminado!`,
+      });
+    } else {
+      const articulo = await Articulo.findByIdAndUpdate(id, {
+        estado: true,
+      });
 
-    res.status(200).json({
-      status: true,
-      msg: `Articulo : ${articulo.denominacion}, Reestablecido!`,
-    });
+      res.status(200).json({
+        status: true,
+        msg: `Articulo : ${articulo.denominacion}, Reestablecido!`,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
   }
 };
 

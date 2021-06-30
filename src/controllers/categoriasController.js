@@ -2,46 +2,64 @@ const { response } = require("express");
 const { subirImagenCloudinary } = require("../helpers/subir-archivo");
 const Categoria = require("../models/categoria");
 
-//FUNCION GET DE CATEGORIAS
+//GET ALL Categorias
 const getCategorias = async (req, res = response) => {
-  //Si No Se Pasa Un Limite (null) Retorna TODOS Los Usuarios
-  //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
-  const { limite = null, desde = 0 } = req.query;
-  //estado : true, Retorna solo los usuarios que no esten softdeleteados
-  const categorias = await Categoria.find({ estado: true })
-    .skip(Number(desde))
-    .limit(Number(limite));
-  res.json({
-    msg: "Lista De Categorias",
-    totalRegistros: categorias.length,
-    categorias: categorias,
-  });
+  try {
+    //Si No Se Pasa Un Limite (null) Retorna TODOS Los Usuarios
+    //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
+    const { limite = null, desde = 0 } = req.query;
+    //estado : true, Retorna solo los usuarios que no esten softdeleteados
+    const categorias = await Categoria.find({ estado: true })
+      .skip(Number(desde))
+      .limit(Number(limite));
+    res.status(200).json({
+      status: true,
+      msg: "Lista De Categorias",
+      totalRegistros: categorias.length,
+      categorias,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 };
 
 const getCategoriasAdmin = async (req, res = response) => {
-  //Si No Se Pasa Un Limite (null) Retorna TODOS Los Usuarios
-  //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
-  const { limite = null, desde = 0 } = req.query;
-  //estado : true, Retorna solo los usuarios que no esten softdeleteados
-  const categorias = await Categoria.find()
-    .skip(Number(desde))
-    .limit(Number(limite));
-  res.json({
-    msg: "Lista De Categorias",
-    totalRegistros: categorias.length,
-    categorias: categorias,
-  });
+  try {
+    //Si No Se Pasa Un Limite (null) Retorna TODOS Los Usuarios
+    //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
+    const { limite = null, desde = 0 } = req.query;
+
+    const categorias = await Categoria.find()
+      .skip(Number(desde))
+      .limit(Number(limite));
+    res.json({
+      status: true,
+      msg: "Lista De Categorias",
+      totalRegistros: categorias.length,
+      categorias,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 };
 
 const getCategoriasByID = async (req, res = response) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const categoria = await Categoria.findById(id);
+    const categoria = await Categoria.findById(id);
 
-  res.json({
-    msg: `Categoria Obtenida`,
-    categoria: categoria,
-  });
+    res.status(200).json({
+      status: true,
+      msg: `Categoria Obtenida`,
+      categoria,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 };
 
 const postCategorias = async (req, res = response) => {
@@ -75,55 +93,66 @@ const postCategorias = async (req, res = response) => {
       categoria,
     });
   } catch (error) {
-    //console.log(error);
+    console.log(error);
+    res.status(400).json({ error });
   }
 };
 
 const putCategorias = async (req, res = response) => {
-  const { id } = req.params;
-  const nombre = req.body.nombre.toUpperCase();
-  const { img } = req.body;
+  try {
+    const { id } = req.params;
+    const nombre = req.body.nombre.toUpperCase();
+    const { img } = req.body;
 
-  const imgCloudinary = await subirImagenCloudinary(
-    img,
-    "BuenSabor/Categorias_Pictures"
-  );
-  const data = {
-    nombre,
-    img: imgCloudinary,
-  };
+    const imgCloudinary = await subirImagenCloudinary(
+      img,
+      "BuenSabor/Categorias_Pictures"
+    );
+    const data = {
+      nombre,
+      img: imgCloudinary,
+    };
 
-  const categoria = await Categoria.findByIdAndUpdate(id, data);
-  res.json({
-    status: true,
-    msg: "Categoria Actualizada Correctamente!",
-    categoria,
-  });
+    const categoria = await Categoria.findByIdAndUpdate(id, data);
+    res.status(200).json({
+      status: true,
+      msg: "Categoria Actualizada Correctamente!",
+      categoria,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 };
 
 //SoftDelete
 const deleteCategorias = async (req, res = response) => {
-  const { id } = req.params;
-  const categoriaEncontrado = await Categoria.findById(id);
+  try {
+    const { id } = req.params;
+    const categoriaEncontrado = await Categoria.findById(id);
 
-  if (categoriaEncontrado.estado === true) {
-    const categoria = await Categoria.findByIdAndUpdate(id, {
-      estado: false,
-    });
+    if (categoriaEncontrado.estado === true) {
+      const categoria = await Categoria.findByIdAndUpdate(id, {
+        estado: false,
+      });
 
-    res.status(200).json({
-      status: true,
-      msg: `Categoria : ${categoria.nombre}, Eliminadoa!`,
-    });
-  } else {
-    const categoria = await Categoria.findByIdAndUpdate(id, {
-      estado: true,
-    });
+      res.status(200).json({
+        status: true,
+        msg: `Categoria : ${categoria.nombre}, Eliminadoa!`,
+      });
+    } else {
+      const categoria = await Categoria.findByIdAndUpdate(id, {
+        estado: true,
+      });
 
-    res.status(200).json({
-      status: true,
-      msg: `Categoria : ${categoria.nombre}, Reestrablecida!`,
-    });
+      res.status(200).json({
+        status: true,
+        msg: `Categoria : ${categoria.nombre}, Reestrablecida!`,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
   }
 };
 module.exports = {

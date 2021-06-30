@@ -15,9 +15,8 @@ const { existeIDArticulo } = require("../helpers/db-validadores");
 
 const router = Router();
 
-//================================================
 //Public Access
-//GET ALL ARTICLES
+//GET ALL Articulos
 router.get("/", [validarCampos], getArticulos);
 router.get(
   "/admin",
@@ -25,11 +24,20 @@ router.get(
   getArticulosAdmin
 );
 
-//GET ONE ARTICLE BY ID
-router.get("/:id", [validarCampos], getArticuloByID);
-//================================================
+//Public Access
+//GET Articulo By ID
+router.get(
+  "/:id",
+  [
+    check("id", "No Es Un ID Valido De Mongo").isMongoId(),
+    check("id").custom(existeIDArticulo),
+    validarCampos,
+  ],
+  getArticuloByID
+);
+
 //Private Access
-//INSERT A NEW ARTICLE
+//POST Nuevo Articulo
 router.post(
   "/",
   [
@@ -46,7 +54,8 @@ router.post(
   postArticulo
 );
 
-//UPDATE AN ARTICLE BY ID
+//Private Access
+//UPDATE Aticulo By ID
 router.put(
   "/:id",
   [
@@ -65,7 +74,8 @@ router.put(
   putArticulo
 );
 
-//DELETE ONE ARTICLE BY ID
+//Private Access
+//DELETE Articulo By ID
 router.delete(
   "/:id",
   [
@@ -77,6 +87,5 @@ router.delete(
   ],
   deleteArticulo
 );
-//=================================================
 
 module.exports = router;

@@ -5,8 +5,8 @@ const { generarJWT } = require("../helpers/generar-jwt");
 const { googleVerify } = require("../helpers/google-verify");
 
 const login = async (req, res = response) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
     //Verificar Email
     const usuario = await Usuario.findOne({ email });
     if (!usuario) {
@@ -31,12 +31,14 @@ const login = async (req, res = response) => {
     //Generar El JWT (JSON Web Token)
     const token = await generarJWT(usuario.id);
 
-    res.json({
+    res.status(200).json({
+      status: true,
       msg: "Login OK",
       usuario,
       token,
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       msg: "Error De Login, Revisar Credenciales",
     });
@@ -44,8 +46,8 @@ const login = async (req, res = response) => {
 };
 
 const adminLogin = async (req, res = response) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
     //Verificar Email
     const usuario = await Usuario.findOne({ email });
     if (!usuario) {
@@ -67,17 +69,22 @@ const adminLogin = async (req, res = response) => {
       });
     }
 
-    if (usuario.rol === "ADMIN_ROLE" || usuario.rol === "COCINERO_ROLE" || usuario.rol === "DELIVERY_ROLE" || usuario.rol === "CAJERO_ROLE" ) {
+    if (
+      usuario.rol === "ADMIN_ROLE" ||
+      usuario.rol === "COCINERO_ROLE" ||
+      usuario.rol === "DELIVERY_ROLE" ||
+      usuario.rol === "CAJERO_ROLE"
+    ) {
       //Generar El JWT (JSON Web Token)
       const token = await generarJWT(usuario.id);
 
-      res.json({
+      res.status(200).json({
         msg: "Login OK",
         usuario,
         token,
       });
     } else {
-      return res.json({
+      return res.status(400).json({
         msg: `Usuario No valido ${usuario.rol}`,
       });
     }
@@ -89,9 +96,8 @@ const adminLogin = async (req, res = response) => {
 };
 
 const googleSignIn = async (req, res = response) => {
-  const { id_token } = req.body;
-
   try {
+    const { id_token } = req.body;
     const { email, nombre, apellido, img } = await googleVerify(id_token);
 
     let usuario = await Usuario.findOne({ email });
@@ -102,13 +108,12 @@ const googleSignIn = async (req, res = response) => {
       const data = {
         nombre,
         apellido,
-        password: "xD",
+        password: "PlaceHolder",
         email,
-
         img,
-
         google: true,
       };
+
       usuario = new Usuario(data);
       await usuario.save();
     }
@@ -121,7 +126,7 @@ const googleSignIn = async (req, res = response) => {
     //Generar El JWT (JSON Web Token)
     const token = await generarJWT(usuario.id);
 
-    res.json({
+    res.status(200).json({
       status: true,
       msg: "Google OK",
       usuario,
@@ -135,20 +140,25 @@ const googleSignIn = async (req, res = response) => {
 };
 
 const renewToken = async (req, res = response) => {
-  //Generar El JWT (JSON Web Token)
+  try {
+    //Generar El JWT (JSON Web Token)
 
-  const { _id, nombre } = req.usuario;
-  const usuario = req.usuario;
-  const token = await generarJWT(_id);
+    const { _id, nombre } = req.usuario;
+    const usuario = req.usuario;
+    const token = await generarJWT(_id);
 
-  res.json({
-    ok: true,
-    msg: "Token Renewed",
-    token,
-    _id,
-    nombre,
-    usuario,
-  });
+    res.json({
+      ok: true,
+      msg: "Token Renewed",
+      token,
+      _id,
+      nombre,
+      usuario,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
 };
 
 module.exports = {
