@@ -37,6 +37,7 @@ class Server {
     this.app.use("/api/articulos", require("../routes/articulos"));
     this.app.use("/api/ingredientes", require("../routes/ingredientes"));
     this.app.use("/api/roles", require("../routes/roles"));
+    this.app.use("/api/auditoria", require("../routes/auditoria"));
   }
 
   listen() {

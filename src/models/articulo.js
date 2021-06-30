@@ -43,6 +43,14 @@ const ArticuloManufacturadoSchema = Schema({
     type: Object,
     default: true,
   },
+  cantidadVenido: {
+    type: Number,
+    default: 0,
+  },
+  categoria: {
+    type: String,
+    required: [false, "La Categoria Es Requerida"],
+  },
 });
 
 module.exports = model("articulo", ArticuloManufacturadoSchema);

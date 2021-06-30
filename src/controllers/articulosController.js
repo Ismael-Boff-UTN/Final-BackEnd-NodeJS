@@ -68,6 +68,7 @@ const postArticulo = async (req, res = response) => {
       precioVenta,
       imagen,
       esManufacturado,
+      categoria
     } = req.body;
 
     const imgCloudinary = await subirImagenCloudinary(
@@ -91,6 +92,7 @@ const postArticulo = async (req, res = response) => {
         articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
         esManufacturado,
         creadoPor,
+        categoria,
       });
 
       await articulo.save();
@@ -107,6 +109,7 @@ const postArticulo = async (req, res = response) => {
         imagen: imgCloudinary,
         esManufacturado,
         creadoPor,
+        categoria
       });
 
       await articulo.save();
@@ -130,6 +133,7 @@ const putArticulo = async (req, res = response) => {
       precioVenta,
       imagen,
       esManufacturado,
+      categoria
     } = req.body;
 
     const imgCloudinary = await subirImagenCloudinary(
@@ -144,6 +148,7 @@ const putArticulo = async (req, res = response) => {
       imagen: imgCloudinary,
       articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
       esManufacturado,
+      categoria
     };
 
     await Articulo.findByIdAndUpdate(id, data);
