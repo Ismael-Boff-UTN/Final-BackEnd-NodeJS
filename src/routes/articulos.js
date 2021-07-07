@@ -44,7 +44,6 @@ router.post(
     validarJWT,
     tieneRole("ADMIN_ROLE"),
     check("denominacion", "La Denominacion Es Obligtoria").not().isEmpty(),
-    check("precioVenta", "El Precio Venta Es Obligtorio").not().isEmpty(),
     check("imagen", "La Imagen Es Obligtoria").not().isEmpty(),
     check("tiempoEstimadoCocina", "El Tiempo De Coccion Es Obligtorio")
       .not()

@@ -7,7 +7,7 @@ const ArticuloManufacturadoSchema = Schema({
   },
   precioVenta: {
     type: Number,
-    required: [true, "El Precio De Venta Es Requerido"],
+    required: false
   },
   imagen: {
     type: String,

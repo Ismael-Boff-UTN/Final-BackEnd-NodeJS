@@ -6,6 +6,7 @@ const {
   postUsuarios,
   putUsuarios,
   deleteUsuarios,
+  addPedidoUsuario,
 } = require("../controllers/usuariosController");
 const { validarCampos } = require("../middlewares/validarCampos");
 const {
@@ -18,13 +19,11 @@ const { tieneRole } = require("../middlewares/validar-roles");
 
 const router = Router();
 
-
 //================================
 //   Obtener Todos Los Usuarios
 // Tipo Publico
 //================================
-router.get("/",[validarJWT], getUsuarios);
-
+router.get("/", [validarJWT], getUsuarios);
 
 //================================
 //   Crear Nuevo Usuario
@@ -33,7 +32,6 @@ router.get("/",[validarJWT], getUsuarios);
 router.post(
   "/",
   [
-    
     check("email").custom(esEmailvalido),
     check("nombre", "Nombre Requerido").not().isEmpty(),
     check("password", "Password No Valido").isLength({ min: 6 }),
@@ -44,6 +42,23 @@ router.post(
 );
 
 //================================
+//   Agrega Un Pedido Al Usuario Por ID
+//
+//================================
+router.put(
+  "/addPedidoUsuario/:id",
+  [
+    validarJWT,
+    tieneRole("ADMIN_ROLE"),
+    check("id", "No Es Un ID Valido De Mongo").isMongoId(),
+    check("id").custom(existeIDUsuario),
+    
+    validarCampos,
+  ],
+  addPedidoUsuario
+);
+
+//================================
 //   Editar Un Usuario
 // Tipo Privado, Solo Admins
 //================================
@@ -51,7 +66,7 @@ router.put(
   "/:id",
   [
     validarJWT,
-    tieneRole('ADMIN_ROLE'),
+    tieneRole("ADMIN_ROLE"),
     check("id", "No Es Un ID Valido De Mongo").isMongoId(),
     check("id").custom(existeIDUsuario),
     check("rol").custom(esRolValido),
@@ -68,7 +83,7 @@ router.delete(
   "/:id",
   [
     validarJWT,
-    tieneRole('ADMIN_ROLE'),
+    tieneRole("ADMIN_ROLE"),
     check("id", "No Es Un ID Valido De Mongo").isMongoId(),
     check("id").custom(existeIDUsuario),
     validarCampos,

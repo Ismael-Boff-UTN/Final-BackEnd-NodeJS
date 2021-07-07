@@ -1,8 +1,10 @@
 //Imports
 const { response } = require("express");
 const Usuario = require("../models/usuario");
+const Pedido = require("../models/pedido");
 const bcryptjs = require("bcrypt");
 const { esEmailvalido } = require("../helpers/db-validadores");
+const { v4: uuidv4 } = require("uuid");
 
 //FUNCION GET DE USUARIOS
 const getUsuarios = async (req, res = response) => {
@@ -29,7 +31,7 @@ const getUsuarios = async (req, res = response) => {
 const postUsuarios = async (req, res = response) => {
   try {
     const { nombre, email, password, rol, apellido, telefono, img } = req.body;
-    console.log(img);
+
     const usuario = new Usuario({
       nombre,
       email,
@@ -109,9 +111,47 @@ const deleteUsuarios = async (req, res = response) => {
   }
 };
 
+//Añadir Pedido a Usuario
+const addPedidoUsuario = async (req, res = response) => {
+  try {
+    const { estado, tipoEnvio } = req.body;
+    const detalles = req.body.detalles;
+    var idp = uuidv4();
+    const usuario = req.usuario;
+
+    var totalPrecio = 0;
+    detalles.forEach((item) => {
+      totalPrecio += item.precioUnitario * item.cantidad;
+    });
+
+    const pedido = new Pedido({
+      estado,
+      tipoEnvio,
+      detallesPedido: req.body.detalles,
+      total: totalPrecio,
+      numero: idp,
+      nombreCliente: usuario.nombre + " " + usuario.apellido,
+      telefono: usuario.telefono,
+      domicilioEnvio: usuario.domicilio,
+    });
+
+    const { id } = req.params;
+
+    await Usuario.findByIdAndUpdate(id, { $push: { pedidos: pedido } });
+
+    res.status(200).json({
+      msg: "Pedido Agregado Correctamente!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+
 module.exports = {
   getUsuarios,
   postUsuarios,
   putUsuarios,
   deleteUsuarios,
+  addPedidoUsuario,
 };

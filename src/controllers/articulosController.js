@@ -68,7 +68,7 @@ const postArticulo = async (req, res = response) => {
       precioVenta,
       imagen,
       esManufacturado,
-      categoria
+      categoria,
     } = req.body;
 
     const imgCloudinary = await subirImagenCloudinary(
@@ -84,10 +84,18 @@ const postArticulo = async (req, res = response) => {
     };
 
     if (esManufacturado === true) {
+      const detalles = {
+        articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
+      };
+      precioVentaSumado = 0;
+      detalles.articuluManufacturadoDetalle.forEach((insumo) => {
+        precioVentaSumado += insumo.precioVenta;
+      });
+      
       const articulo = new Articulo({
         tiempoEstimadoCocina,
         denominacion,
-        precioVenta,
+        precioVenta: precioVentaSumado,
         imagen: imgCloudinary,
         articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
         esManufacturado,
@@ -109,7 +117,7 @@ const postArticulo = async (req, res = response) => {
         imagen: imgCloudinary,
         esManufacturado,
         creadoPor,
-        categoria
+        categoria,
       });
 
       await articulo.save();
@@ -133,7 +141,7 @@ const putArticulo = async (req, res = response) => {
       precioVenta,
       imagen,
       esManufacturado,
-      categoria
+      categoria,
     } = req.body;
 
     const imgCloudinary = await subirImagenCloudinary(
@@ -148,7 +156,7 @@ const putArticulo = async (req, res = response) => {
       imagen: imgCloudinary,
       articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
       esManufacturado,
-      categoria
+      categoria,
     };
 
     await Articulo.findByIdAndUpdate(id, data);

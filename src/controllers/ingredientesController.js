@@ -59,7 +59,7 @@ const postIngrediente = async (req, res = response) => {
     const ingrediente = new Ingrediente({
       denominacion,
       precioCompra,
-      precioVenta,
+      precioVenta: precioCompra * 2,
       stockActual,
       stockMinimo,
       unidadMedida,

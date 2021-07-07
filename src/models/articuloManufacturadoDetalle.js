@@ -4,18 +4,17 @@ const ArticuloManufacturadoDetalleSchema = Schema({
   denominacionIngrediente: {
     type: String,
     required: [true, "La Denominacion Es Requerida"],
-    default: 1,
+    
   },
   cantidad: {
     type: Number,
     required: [true, "La Cantidad Es Requerida"],
-    default: 1,
+    
   },
-  unidadMedida: {
-    type: String,
-    required: [true, "La Unidad De Medida Es Requerida"],
-    default: "gr",
-  },
+  precioVenta :{
+    type : Number,
+    require : [true, "El Precio Venta Es Requerido"]
+  }
 });
 
 module.exports = model(

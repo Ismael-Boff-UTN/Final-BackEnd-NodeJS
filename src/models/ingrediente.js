@@ -11,7 +11,7 @@ const IngredienteSchema = Schema({
   },
   precioVenta: {
     type: Number,
-    required: [true, "El Precio De Venta Es Requerido"],
+    required: false
   },
   stockActual: {
     type: Number,

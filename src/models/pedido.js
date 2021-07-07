@@ -3,29 +3,44 @@ const { Schema, model } = require("mongoose");
 const PedidoSchema = Schema({
   fecha: {
     type: Date,
-    required: [true, "La Fecha Es Requerida"],
+    default: new Date(),
+  },
+  numero: {
+    type: String,
+    require: true,
   },
   estado: {
-    type: Boolean,
-    default: true,
+    type: String,
     required: true,
   },
-  horaEstimadaFin:{
-      type : Date,
-      required:[true, "La Hora Estimada De Entrega Es Requerida"]
+  domicilioEnvio: {
+    type: Schema.Types.Mixed,
+    ref: "domicilio",
+    required: [false, "El Domicilio Es Requerido"],
+    default: { localidad: "", calle: "", numero: "" },
   },
-  tipoEnvio:{
-      type: String,
-      required:[true, "El Tipo De Envio Es Requerido"]
+  telefono: {
+    type: Number,
+    require: true,
   },
-  total:{
-      type: Number,
-      required: [true, "El Total Es Requerido"]
+  nombreCliente: {
+    type: String,
+    required: true,
   },
-  detallesPedido:[{
+  tipoEnvio: {
+    type: String,
+    required: [true, "El Tipo De Envio Es Requerido"],
+  },
+  total: {
+    type: Number,
+    required: [false, "El Total Es Requerido"],
+  },
+  detallesPedido: [
+    {
       type: Schema.Types.Mixed,
-      ref: 'detallespedido'
-  }]
+      ref: "detallespedido",
+    },
+  ],
 });
 
 module.exports = model("pedido", PedidoSchema);
