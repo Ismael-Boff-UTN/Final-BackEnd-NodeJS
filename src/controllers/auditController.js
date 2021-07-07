@@ -80,11 +80,11 @@ const getGanancias = async (req, res = response) => {
       total += pedido.total;
     });
     //return total
-    
+
     //TODO
     //Obtener costos
     totalRecaudacion = total;
-    totalGanancias = total / 2  // Total - 50% Ej. Si Total = 100, 50 son ganancias 50 son para volver a comprar el articulo
+    totalGanancias = total / 2; // Total - 50% Ej. Si Total = 100, 50 son ganancias 50 son para volver a comprar el articulo
 
     res.status(200).json({
       status: true,
@@ -93,13 +93,11 @@ const getGanancias = async (req, res = response) => {
       //result,
       totalGanancias,
       totalRecaudacion,
-
     });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error });
   }
-    
 };
 //Ingresos (recaudaciones) por períodos de tiempo. Diario / Mensual
 const getRecaudaciones = async (req, res = response) => {
@@ -146,9 +144,38 @@ const getRecaudaciones = async (req, res = response) => {
   }
 };
 
+const getUltimosPedidos = async (req, res = response) => {
+  try {
+    const usuarios = await Usuario.find({ estado: true });
+    const usuariosPedidos = []; //Array Con Todos Los Pedidos, De Todos Los Usuarios
+    await usuarios.forEach((user) => {
+      if (user.pedidos.length > 0) {
+        user.pedidos.forEach((pedido) => {
+          usuariosPedidos.push(pedido);
+        });
+      }
+    });
+
+    ultimosPedidos = usuariosPedidos
+      .sort((a, b) => b.fecha - a.fecha)
+      .slice(0, 5);
+
+    res.status(200).json({
+      status: true,
+      msg: "Ultimos Pedidos",
+      size: ultimosPedidos.length,
+      ultimosPedidos,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+
 module.exports = {
   getArtiuclosMasVendidos,
   getPedidosUsuarios,
   getGanancias,
   getRecaudaciones,
+  getUltimosPedidos,
 };
