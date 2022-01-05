@@ -1,7 +1,7 @@
 const roles = require("../models/rol");
 const Usuario = require("../models/usuario");
-const Categoria = require('../models/categoria');
-const Articulo = require('../models/articulo');
+const Categoria = require("../models/categoria");
+const Articulo = require("../models/articulo");
 
 //Valida Que El Rol Ingresado Exista En La DB
 const esRolValido = async (rol = "") => {
@@ -15,7 +15,10 @@ const esRolValido = async (rol = "") => {
 const esEmailvalido = async (email = "") => {
   const existeEmail = await Usuario.findOne({ email });
   if (existeEmail) {
-    throw new Error(`El Email ${email} YA ESTÁ registrado!`);
+    //throw new Error(`El Email ${email} YA ESTÁ registrado!`);
+    return true;
+  } else {
+    return false;
   }
 };
 

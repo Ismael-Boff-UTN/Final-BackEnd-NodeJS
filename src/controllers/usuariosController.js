@@ -30,7 +30,7 @@ const getUsuarios = async (req, res = response) => {
 //FUNCION POST DEL USUARIO
 const postUsuarios = async (req, res = response) => {
   try {
-    const { nombre, email, password, rol, apellido, telefono, img } = req.body;
+    const { nombre, apellido, email, password, rol, telefono } = req.body;
 
     const usuario = new Usuario({
       nombre,
@@ -39,20 +39,46 @@ const postUsuarios = async (req, res = response) => {
       rol,
       apellido,
       telefono,
-      domicilio: req.body.domicilio,
-      img,
     });
-    //Verificar Si El Email Existe Usando Mi Helper Pesonalizado
-    esEmailvalido(email);
-    //Encriptar Contraseña
-    const salt = bcryptjs.genSaltSync();
-    usuario.password = bcryptjs.hashSync(password, salt);
-    //Guardo El Usuario
-    await usuario.save();
-    res.json({
-      msg: "Insertado Correctamente!",
-      usuario,
-    });
+
+    let usuarioBuscar = await Usuario.findOne({ email });
+
+    //Se Valida Si El User Existe
+    if (usuarioBuscar) {
+      let usuarioBuscar = await Usuario.findOne({ email });
+
+      //Si Ya Habia Logueado Con Google Solo Se Actualiza Password Y Telefono
+      if (usuarioBuscar.google) {
+        let id = usuarioBuscar._id;
+        const salt = bcryptjs.genSaltSync();
+        const passwordEnc = await bcryptjs.hashSync(password, salt);
+        await Usuario.findByIdAndUpdate(id, {
+          password: passwordEnc,
+          telefono,
+        });
+        res.json({
+          status: true,
+          msg: "Existia Con Google!",
+        });
+      } else {
+        //Si Existe usuario con mismo correo pero google en false
+        res.json({
+          status: false,
+          msg: "Correo Ya Existe",
+        });
+      }
+    } else if (!usuarioBuscar) {//Si No Existia Y No tenia Google Se Crea de 0
+      //Encriptar Contraseña
+      const salt = bcryptjs.genSaltSync();
+      usuario.password = bcryptjs.hashSync(password, salt);
+      //Guardo El Usuario
+      await usuario.save();
+      res.json({
+        status: true,
+        msg: "Insertado Correctamente!",
+        usuario,
+      });
+    }
   } catch (error) {
     console.log(error);
     res.status(400).json({ error });

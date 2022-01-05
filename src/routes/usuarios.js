@@ -32,7 +32,7 @@ router.get("/", [validarJWT], getUsuarios);
 router.post(
   "/",
   [
-    check("email").custom(esEmailvalido),
+    //check("email").custom(esEmailvalido),
     check("nombre", "Nombre Requerido").not().isEmpty(),
     check("password", "Password No Valido").isLength({ min: 6 }),
     check("rol").custom(esRolValido),

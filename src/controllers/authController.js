@@ -101,10 +101,27 @@ const googleSignIn = async (req, res = response) => {
     const { email, nombre, apellido, img } = await googleVerify(id_token);
 
     let usuario = await Usuario.findOne({ email });
+
+    //Si Existe La Cuenta Con Mismo Mail pero logueado Con google
+    if (usuario.email === email && usuario.google === false) {
+      await Usuario.findByIdAndUpdate(usuario._id, {
+        google: true,
+        img,
+      });
+      //Generar El JWT (JSON Web Token)
+      const token = await generarJWT(usuario.id);
+
+      res.status(200).json({
+        status: true,
+        msg: "Google OK",
+        usuario,
+        token,
+      });
+    }
     //Si El Usuario NO Existe
     if (!usuario) {
       //Se Crea
-
+      console.log("se intnto crear");
       const data = {
         nombre,
         apellido,
