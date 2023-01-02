@@ -1,0 +1,51 @@
+const express = require("express");
+require("dotenv").config();
+const cors = require("cors");
+const { dbConnection } = require("../database/configdb");
+
+class Server {
+  constructor() {
+    //Inicializacion Del Server
+    this.app = express();
+    this.port = process.env.PORT;
+
+    //Conectar DB
+    this.conectarDB();
+    //Middlewares
+    this.middlewares();
+
+    //Rutas Del Server
+    this.routes();
+  }
+
+  async conectarDB() {
+    await dbConnection();
+  }
+
+  middlewares() {
+    //CORS
+    this.app.use(cors());
+    //ParseJSON
+    this.app.use(express.json({ limit: "50mb" }));
+    this.app.use(express.urlencoded({ extended: "50mb" }));
+  }
+  routes() {
+    this.app.use("/", require("../routes/default"));
+    this.app.use("/api/usuarios", require("../routes/usuarios"));
+    this.app.use("/api/auth", require("../routes/auth"));
+    this.app.use("/api/categorias", require("../routes/categorias"));
+    this.app.use("/api/articulos", require("../routes/articulos"));
+    this.app.use("/api/ingredientes", require("../routes/ingredientes"));
+    this.app.use("/api/roles", require("../routes/roles"));
+    this.app.use("/api/auditoria", require("../routes/auditoria"));
+    this.app.use("/api/pagomp", require("../routes/pagomp"));
+  }
+
+  listen() {
+    this.app.listen(this.port, () => {
+      console.log("Server Running On PORT ==> " , this.port);
+    });
+  }
+}
+
+module.exports = Server;
