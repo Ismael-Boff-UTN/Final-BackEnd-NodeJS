@@ -100,7 +100,6 @@ const addDetallePedido = async (req, res = response) => {
     const { id } = req.params;
 
     await Pedido.findByIdAndUpdate(id, { $push: { detallesPedido: detalle } });
-
     res.status(200).json({
       msg: "Detalle Agregado Correctamente!",
     });
