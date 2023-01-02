@@ -38,10 +38,7 @@ class Server {
     this.app.use("/api/ingredientes", require("../routes/ingredientes"));
     this.app.use("/api/roles", require("../routes/roles"));
     this.app.use("/api/auditoria", require("../routes/auditoria"));
-<<<<<<< HEAD
     this.app.use("/api/pagomp", require("../routes/pagomp"));
-=======
->>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
   }
 
   listen() {

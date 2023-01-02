@@ -96,15 +96,11 @@ const adminLogin = async (req, res = response) => {
 };
 
 const googleSignIn = async (req, res = response) => {
-<<<<<<< HEAD
   
-=======
->>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
   try {
     const { id_token } = req.body;
     const { email, nombre, apellido, img } = await googleVerify(id_token);
 
-<<<<<<< HEAD
     //console.log("email seria: "+email)
 
     let usuario = await Usuario.findOne({ email });
@@ -128,10 +124,6 @@ const googleSignIn = async (req, res = response) => {
       usuario = new Usuario(data);
       await usuario.save();
     }
-=======
-    let usuario = await Usuario.findOne({ email });
-
->>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
     //Si Existe La Cuenta Con Mismo Mail pero logueado Con google
     if (usuario.email === email && usuario.google === false) {
       await Usuario.findByIdAndUpdate(usuario._id, {
@@ -148,25 +140,6 @@ const googleSignIn = async (req, res = response) => {
         token,
       });
     }
-<<<<<<< HEAD
-=======
-    //Si El Usuario NO Existe
-    if (!usuario) {
-      //Se Crea
-      console.log("se intnto crear");
-      const data = {
-        nombre,
-        apellido,
-        password: "PlaceHolder",
-        email,
-        img,
-        google: true,
-      };
-
-      usuario = new Usuario(data);
-      await usuario.save();
-    }
->>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
     //Si El Usuario Esta SoftDeleteado
     if (!usuario.estado) {
       return res.status(401).json({
@@ -183,10 +156,7 @@ const googleSignIn = async (req, res = response) => {
       token,
     });
   } catch (error) {
-<<<<<<< HEAD
     console.log(error)
-=======
->>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
     res.status(400).json({
       msg: "Token De Google Invalido!",
     });

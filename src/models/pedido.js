@@ -35,13 +35,10 @@ const PedidoSchema = Schema({
     type: Number,
     required: [false, "El Total Es Requerido"],
   },
-<<<<<<< HEAD
   porCompletar: {
     type: Boolean,
     default: true,
   },
-=======
->>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
   detallesPedido: [
     {
       type: Schema.Types.Mixed,
