@@ -16,9 +16,14 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.10.0",
+<<<<<<< HEAD
     "google-auth-library": "8.7",
     "jsonwebtoken": "^8.5.1",
     "mercadopago": "^1.5.14",
+=======
+    "google-auth-library": "^7.0.3",
+    "jsonwebtoken": "^8.5.1",
+>>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
     "mongoose": "^5.12.2",
     "uuid": "^8.3.2"
   },

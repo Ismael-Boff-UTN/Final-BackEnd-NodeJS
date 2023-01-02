@@ -8,13 +8,22 @@ const googleVerify = async (idToken = '') => {
     idToken,
     audience: process.env.GOOGLE_SIGN_CLIENT_ID,
   });
+<<<<<<< HEAD
   console.log(ticket);
+=======
+>>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
   const {
     given_name: nombre,
     family_name: apellido,
     picture: img,
+<<<<<<< HEAD
     email: email,
   } = ticket.getPayload();
+=======
+    email,
+  } = ticket.getPayload();
+
+>>>>>>> ea83182f36b12e34f74c1bd25357bd7933514132
   return { nombre, apellido, img, email };
 };
 
