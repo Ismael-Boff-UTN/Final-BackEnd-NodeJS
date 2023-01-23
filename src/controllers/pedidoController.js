@@ -2,24 +2,35 @@
 const { response } = require("express");
 const Detalle = require("../models/detallesPedido");
 const Pedido = require("../models/pedido");
+const Usuario = require("../models/usuario");
+const nodemailer = require("nodeMailer");
 const bcryptjs = require("bcrypt");
 const { esEmailvalido } = require("../helpers/db-validadores");
 const { v4: uuidv4 } = require("uuid");
-
+const config = require("../private/emailData.json");
+const emailSend = require("../helpers/emailSender")
 
 //FUNCION GET DE PEDIDOS
 const getPedidos = async (req, res = response) => {
   try {
-    //Si No Se Pasa Un Limite (null) Retorna TODOS Los Pedidos
-    //Ej. http://localhost:4000/api/usuarios?limite=5&desde=4
-    const { limite = null, desde = 0 } = req.query;
-    //estado : true, Retorna solo los Pedidos que no esten softdeleteados
-    const pedidos = await Pedido.find({ porCompletar: true })
-      .skip(Number(desde))
-      .limit(Number(limite));
+    const { id } = req.params;
+    console.log(String(id));
+    const usuarios = await Usuario.find({ estado: true });
+    const usuariosPedidos = []; //Array Con Todos Los Pedidos, De Todos Los Usuarios
+    await usuarios.forEach((user) => {
+      if (String(user._id) === String(id)) {
+        user.pedidos.forEach((pedido) => {
+            usuariosPedidos.push(pedido);
+        });
+      }
+    });
+
+    pedidos = usuariosPedidos;
+
     res.status(200).json({
-      msg: "Lista De Pedidos",
-      totalRegistros: pedidos.length,
+      status: true,
+      msg: "Pedidos por usuario",
+      size: pedidos.length,
       pedidos,
     });
   } catch (error) {
@@ -28,35 +39,28 @@ const getPedidos = async (req, res = response) => {
   }
 };
 
-//FUNCION POST DEL PEDIDO
-const postPedidos = async (req, res = response) => {
+//FUNCION GET DE COCINERO
+const getPedidosCocinero = async (req, res = response) => {
   try {
-    const { estado, tipoEnvio, fecha } = req.body;
-    const detalles = req.body.detalles;
-    const usuario = req.usuario;
-
-    var totalPrecio = 0;
-    detalles.forEach((item) => {
-      totalPrecio += item.precioUnitario * item.cantidad;
+    const usuarios = await Usuario.find({ estado: true });
+    const usuariosPedidos = []; //Array Con Todos Los Pedidos, De Todos Los Usuarios
+    await usuarios.forEach((user) => {
+      if (user.pedidos.length > 0) {
+        user.pedidos.forEach((pedido) => {
+          if(pedido.estado == "En preparacion"){
+            usuariosPedidos.push(pedido);
+          }
+        });
+      }
     });
 
-    const pedido = new Pedido({
-      estado,
-      tipoEnvio,
-      fecha,
-      detallesPedido: req.body.detalles,
-      total: totalPrecio,
-      nombreCliente: usuario.nombre + " " + usuario.apellido,
-      telefono: usuario.telefono,
-      domicilioEnvio: usuario.domicilio,
-    });
+    pedidosCoci = usuariosPedidos;
 
-    //Guardo El Usuario
-    await pedido.save();
-    res.json({
-        status: true,
-        msg: "Insertado Correctamente!",
-        pedido,
+    res.status(200).json({
+      status: true,
+      msg: "Pedidos Cocinero",
+      size: pedidosCoci.length,
+      pedidosCoci,
     });
   } catch (error) {
     console.log(error);
@@ -64,13 +68,130 @@ const postPedidos = async (req, res = response) => {
   }
 };
 
-//FUNCION PUT DEL USUARIO
+//FUNCION GET DE DELIVERY
+const getPedidosDelivery = async (req, res = response) => {
+  try {
+    const usuarios = await Usuario.find({ estado: true });
+    const usuariosPedidos = []; //Array Con Todos Los Pedidos, De Todos Los Usuarios
+    await usuarios.forEach((user) => {
+      if (user.pedidos.length > 0) {
+        user.pedidos.forEach((pedido) => {
+          if(pedido.estado == "Para retirar"){
+            usuariosPedidos.push(pedido);
+          }
+        });
+      }
+    });
+
+    pedidosDeli = usuariosPedidos;
+
+    res.status(200).json({
+      status: true,
+      msg: "Pedidos Delivery",
+      size: pedidosDeli.length,
+      pedidosDeli,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+
+//FUNCION GET DE CAJA FACTURACION
+const getPedidosCajaFacturacion = async (req, res = response) => {
+  try {
+    const usuarios = await Usuario.find({ estado: true });
+    const usuariosPedidos = []; //Array Con Todos Los Pedidos, De Todos Los Usuarios
+    await usuarios.forEach((user) => {
+      if (user.pedidos.length > 0) {
+        user.pedidos.forEach((pedido) => {
+          if(pedido.estado == "Preparado"){
+            usuariosPedidos.push(pedido);
+          }
+        });
+      }
+    });
+
+    pedidosCajaFact = usuariosPedidos;
+
+    res.status(200).json({
+      status: true,
+      msg: "Pedidos Caja Facturacion",
+      size: pedidosCajaFact.length,
+      pedidosCajaFact,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+
+//FUNCION GET DE CAJA ADMICION
+const getPedidosCajaAdmision = async (req, res = response) => {
+  try {
+    const usuarios = await Usuario.find({ estado: true });
+    const usuariosPedidos = []; //Array Con Todos Los Pedidos, De Todos Los Usuarios
+    await usuarios.forEach((user) => {
+      if (user.pedidos.length > 0) {
+        user.pedidos.forEach((pedido) => {
+          if(pedido.estado == "En aprobacion"){
+            usuariosPedidos.push(pedido);
+          }
+        });
+      }
+    });
+
+    pedidosCajaAdmi = usuariosPedidos;
+
+    res.status(200).json({
+      status: true,
+      msg: "Pedidos Caja Admision",
+      size: pedidosCajaAdmi.length,
+      pedidosCajaAdmi,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+
+//FUNCION PUT DE LOS PEDIDOS
 const putPedidos = async (req, res = response) => {
   try {
     const { id } = req.params;
-    const { _id, ...resto } = req.body;
+    const { _id, estado} = req.body;
 
-    const pedido = await Pedido.findByIdAndUpdate(id, resto);
+    //buscamos el usuario con ese pedido
+    const usuarios = await Usuario.find({ estado: true });
+    var usuarioAModificar = new Usuario;
+    await usuarios.forEach((user) => {
+      if (user.pedidos.length > 0) {
+        user.pedidos.forEach((pedido) => {
+          //console.log(pedido._id);
+          if(String(pedido._id) === String(_id)){
+            usuarioAModificar=user;
+          }
+        });
+      }
+    });
+    
+    var pedidoAFacturar = new Pedido;
+    //modificamos el estado
+    usuarioAModificar.pedidos.forEach((pedido) => {
+      if(String(pedido._id) === String(_id)){
+        pedido.estado=estado;
+        pedidoAFacturar=pedido;
+      }
+    });
+
+
+    //console.log(usuarioAModificar.nombre);
+    await Usuario.findByIdAndUpdate(usuarioAModificar._id, usuarioAModificar);
+
+    if(estado == "Facturado"){
+      emailSend(usuarioAModificar.nombre, usuarioAModificar.apellido, usuarioAModificar.email , pedidoAFacturar.fecha, pedidoAFacturar.detallesPedido ,pedidoAFacturar.total);
+    };
+
     res.json({
       msg: "Pedido Actualizado Correctamente!",
       id,
@@ -82,36 +203,12 @@ const putPedidos = async (req, res = response) => {
 };
 
 
-//Añadir Detalle a Pedido
-const addDetallePedido = async (req, res = response) => {
-  try {
-    const { nombre, cantidad, precioUnitario } = req.body;
-    var idp = uuidv4();
-    const pedido = req.pedido;
-
-
-    const detalle = new Detalle({
-      nombre,
-      cantidad,
-      precioUnitario,
-
-    });
-
-    const { id } = req.params;
-
-    await Pedido.findByIdAndUpdate(id, { $push: { detallesPedido: detalle } });
-    res.status(200).json({
-      msg: "Detalle Agregado Correctamente!",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(400).json({ error });
-  }
-};
 
 module.exports = {
   getPedidos,
-  postPedidos,
+  getPedidosCocinero,
   putPedidos,
-  addDetallePedido,
+  getPedidosDelivery,
+  getPedidosCajaFacturacion,
+  getPedidosCajaAdmision,
 };

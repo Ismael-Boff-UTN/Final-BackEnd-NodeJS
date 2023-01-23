@@ -24,8 +24,10 @@ router.get(
   getArticulosAdmin
 );
 
+
 //Public Access
 //GET Articulo By ID
+
 router.get(
   "/:id",
   [

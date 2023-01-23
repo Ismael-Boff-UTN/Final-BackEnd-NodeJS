@@ -23,7 +23,7 @@ const router = Router();
 //   Obtener Todos Los Usuarios
 // Tipo Publico
 //================================
-router.get("/", [validarJWT], getUsuarios);
+router.get("/", [validarJWT],tieneRole("ADMIN_ROLE"), getUsuarios);
 
 //================================
 //   Crear Nuevo Usuario
