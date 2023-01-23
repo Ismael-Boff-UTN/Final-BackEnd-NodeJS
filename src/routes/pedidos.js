@@ -20,9 +20,9 @@ const { tieneRole } = require("../middlewares/validar-roles");
 const router = Router();
 
 
-//================================
+//=================================
 //   Obtener pedidos para cocinero
-//================================
+//=================================
 router.get("/cocinero", [validarJWT], tieneRole("ADMIN_ROLE", "COCINERO_ROLE"), getPedidosCocinero);
 
 //================================
