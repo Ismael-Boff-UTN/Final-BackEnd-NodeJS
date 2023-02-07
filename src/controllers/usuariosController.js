@@ -140,7 +140,8 @@ const deleteUsuarios = async (req, res = response) => {
 //Añadir Pedido a Usuario
 const addPedidoUsuario = async (req, res = response) => {
   try {
-    //console.log(req.body)
+
+    console.log(req.body)
     const { id } = req.params;
     const { tipoPago, tipoEnvio, domicilio} = req.body;
     const detalles = req.body.items;

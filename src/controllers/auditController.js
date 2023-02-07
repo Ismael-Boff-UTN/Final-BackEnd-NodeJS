@@ -156,6 +156,7 @@ const getUltimosPedidos = async (req, res = response) => {
       }
     });
 
+    
     ultimosPedidos = usuariosPedidos
       .sort((a, b) => b.fecha - a.fecha)
       .slice(0, 5);
