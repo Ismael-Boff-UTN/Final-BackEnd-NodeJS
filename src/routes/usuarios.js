@@ -49,10 +49,10 @@ router.put(
   "/addPedidoUsuario/:id",
   [
     validarJWT,
-    tieneRole("ADMIN_ROLE"),
+    
     check("id", "No Es Un ID Valido De Mongo").isMongoId(),
     check("id").custom(existeIDUsuario),
-    
+
     validarCampos,
   ],
   addPedidoUsuario

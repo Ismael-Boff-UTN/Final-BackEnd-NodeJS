@@ -140,10 +140,12 @@ const deleteUsuarios = async (req, res = response) => {
 //Añadir Pedido a Usuario
 const addPedidoUsuario = async (req, res = response) => {
   try {
-    const { estado, tipoEnvio } = req.body;
-    const detalles = req.body.detalles;
+    //console.log(req.body)
+    const { id } = req.params;
+    const { tipoPago, tipoEnvio, domicilio} = req.body;
+    const detalles = req.body.items;
     var idp = uuidv4();
-    const usuario = req.usuario;
+    const usuario =  await Usuario.findByIdAndUpdate(id);
 
     var totalPrecio = 0;
     detalles.forEach((item) => {
@@ -151,22 +153,22 @@ const addPedidoUsuario = async (req, res = response) => {
     });
 
     const pedido = new Pedido({
-      estado,
+      estado: "En aprobacion",
       tipoEnvio,
-      detallesPedido: req.body.detalles,
+      tipoPago,
+      detallesPedido: req.body.items,
       total: totalPrecio,
       numero: idp,
       nombreCliente: usuario.nombre + " " + usuario.apellido,
       telefono: usuario.telefono,
-      domicilioEnvio: usuario.domicilio,
+      domicilioEnvio: domicilio,
     });
-
-    const { id } = req.params;
 
     await Usuario.findByIdAndUpdate(id, { $push: { pedidos: pedido } });
 
     res.status(200).json({
       msg: "Pedido Agregado Correctamente!",
+      numero: pedido.numero,
     });
   } catch (error) {
     console.log(error);
