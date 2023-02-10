@@ -73,7 +73,7 @@ const adminLogin = async (req, res = response) => {
       usuario.rol === "ADMIN_ROLE" ||
       usuario.rol === "COCINERO_ROLE" ||
       usuario.rol === "DELIVERY_ROLE" ||
-      usuario.rol === "CAJERO_ROLE"
+      usuario.rol === "CAJA_ROLE"
     ) {
       //Generar El JWT (JSON Web Token)
       const token = await generarJWT(usuario.id);

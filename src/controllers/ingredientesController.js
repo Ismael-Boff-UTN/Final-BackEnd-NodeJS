@@ -119,6 +119,46 @@ const putIngrediente = async (req, res = response) => {
     res.status(400).json({ error });
   }
 };
+
+//put dedescuento para comprar
+const putIngredienteDescontar = async (req, res = response) => {
+  console.log(req);
+  try {
+    console.log(req)
+    const {
+      _id,
+      denominacion,
+      precioCompra,
+      precioVenta,
+      stockActual,
+      stockMinimo,
+      unidadMedida,
+      estado,
+    } = req.body;
+
+    const data = {
+      _id,
+      denominacion,
+      precioCompra,
+      precioVenta,
+      stockActual,
+      stockMinimo,
+      unidadMedida,
+      estado,
+    };
+
+    const ingrediente = await Ingrediente.findByIdAndUpdate(data._id, data);
+    res.status(200).json({
+      status: true,
+      msg: "Ingrediente Actualizado Correctamente!",
+      ingrediente,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+
 const deleteIngrediente = async (req, res = response) => {
   try {
     const { id } = req.params;
@@ -156,4 +196,5 @@ module.exports = {
   postIngrediente,
   putIngrediente,
   deleteIngrediente,
+  putIngredienteDescontar,
 };

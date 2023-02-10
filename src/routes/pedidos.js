@@ -33,12 +33,12 @@ router.get("/delivery", [validarJWT], tieneRole("ADMIN_ROLE", "DELIVERY_ROLE") ,
 //================================
 //   Obtener pedidos para caja
 //================================
-router.get("/caja", [validarJWT], tieneRole("ADMIN_ROLE") , getPedidosCajaFacturacion);
+router.get("/caja", [validarJWT], tieneRole("ADMIN_ROLE", "CAJA_ROLE") , getPedidosCajaFacturacion);
 
 //================================
 //   Obtener pedidos para caja
 //================================
-router.get("/cajaAdmision", [validarJWT], tieneRole("ADMIN_ROLE") , getPedidosCajaAdmision);
+router.get("/cajaAdmision", [validarJWT], tieneRole("ADMIN_ROLE", "CAJA_ROLE") , getPedidosCajaAdmision);
 
 //================================
 //   Editar Un Usuario
@@ -48,7 +48,7 @@ router.put(
   "/:id",
   [
     validarJWT,
-    tieneRole("ADMIN_ROLE", "COCINERO_ROLE"),
+    tieneRole("ADMIN_ROLE", "COCINERO_ROLE", "CAJA_ROLE", "DELIVERY_ROLE"),
     check("id", "No Es Un ID Valido De Mongo").isMongoId(),
     //check("rol").custom(esRolValido),
     validarCampos,

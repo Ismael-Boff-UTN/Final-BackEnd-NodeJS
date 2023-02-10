@@ -2,6 +2,7 @@
 const { response } = require("express");
 const Usuario = require("../models/usuario");
 const Pedido = require("../models/pedido");
+const Ingredientes = require("../models/ingrediente");
 const bcryptjs = require("bcrypt");
 const { esEmailvalido } = require("../helpers/db-validadores");
 const { v4: uuidv4 } = require("uuid");
@@ -106,6 +107,7 @@ const putUsuarios = async (req, res = response) => {
     res.status(400).json({ error });
   }
 };
+
 const deleteUsuarios = async (req, res = response) => {
   try {
     const { id } = req.params;
@@ -137,16 +139,46 @@ const deleteUsuarios = async (req, res = response) => {
   }
 };
 
+const putIngredienteDescontar = async (req) => {
+  try {
+    const {
+      _id,
+      denominacion,
+      precioCompra,
+      precioVenta,
+      stockActual,
+      stockMinimo,
+      unidadMedida,
+      estado,
+    } = req;
+
+    const data = {
+      _id,
+      denominacion,
+      precioCompra,
+      precioVenta,
+      stockActual,
+      stockMinimo,
+      unidadMedida,
+      estado,
+    };
+
+    await Ingredientes.findByIdAndUpdate(data._id, data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 //Añadir Pedido a Usuario
 const addPedidoUsuario = async (req, res = response) => {
   try {
-
-    console.log(req.body)
+    //console.log(req.body)
     const { id } = req.params;
     const { tipoPago, tipoEnvio, domicilio} = req.body;
     const detalles = req.body.items;
     var idp = uuidv4();
     const usuario =  await Usuario.findByIdAndUpdate(id);
+    const ingredientes = await Ingredientes.find({ estado: true });
 
     var totalPrecio = 0;
     detalles.forEach((item) => {
@@ -163,6 +195,22 @@ const addPedidoUsuario = async (req, res = response) => {
       nombreCliente: usuario.nombre + " " + usuario.apellido,
       telefono: usuario.telefono,
       domicilioEnvio: domicilio,
+    });
+
+    //descontamos stock
+    detalles.forEach((art) => {
+      if(art.articulo.esManufacturado==true){
+        art.articulo.articuluManufacturadoDetalle.forEach((item) => {
+          var ingredienteAModificar = new Ingredientes;
+          ingredientes.forEach((ing) => {
+              if (String(ing._id) === String(item.ingredient._id)) {
+                  ingredienteAModificar=ing
+                  ingredienteAModificar.stockActual=ingredienteAModificar.stockActual-(item.cantidad*art.cantidad);
+                  putIngredienteDescontar(ingredienteAModificar);   
+              }
+          });
+        });
+      }
     });
 
     await Usuario.findByIdAndUpdate(id, { $push: { pedidos: pedido } });

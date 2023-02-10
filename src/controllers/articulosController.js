@@ -87,15 +87,12 @@ const postArticulo = async (req, res = response) => {
       const detalles = {
         articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
       };
-      precioVentaSumado = 0;
-      detalles.articuluManufacturadoDetalle.forEach((insumo) => {
-        precioVentaSumado += insumo.precioVenta;
-      });
+
       
       const articulo = new Articulo({
         tiempoEstimadoCocina,
         denominacion,
-        precioVenta: precioVentaSumado,
+        precioVenta,
         imagen: imgCloudinary,
         articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
         esManufacturado,
