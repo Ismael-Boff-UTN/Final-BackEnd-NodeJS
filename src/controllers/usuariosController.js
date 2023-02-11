@@ -185,6 +185,10 @@ const addPedidoUsuario = async (req, res = response) => {
       totalPrecio += item.precioUnitario * item.cantidad;
     });
 
+    if(tipoEnvio=="Retiro"){
+      totalPrecio = totalPrecio - (totalPrecio*0.10);
+    }
+
     const pedido = new Pedido({
       estado: "En aprobacion",
       tipoEnvio,
