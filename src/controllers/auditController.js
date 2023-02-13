@@ -99,8 +99,9 @@ const getGanancias = async (req, res = response) => {
     res.status(400).json({ error });
   }
 };
-//Ingresos (recaudaciones) por períodos de tiempo. Diario / Mensual
-const getRecaudaciones = async (req, res = response) => {
+
+
+const getRecaudacionesDelDia = async (req, res = response) => {
   try {
     const { fechaInicial = null, fechaFinal = null } = req.query;
     const usuarios = await Usuario.find({ estado: true });
@@ -113,13 +114,12 @@ const getRecaudaciones = async (req, res = response) => {
       }
     });
     //Filtrar Pedidos Entre 2 Fechas
-    var ed = new Date(fechaFinal).getTime();
-    var sd = new Date(fechaInicial).getTime();
+    var ed = new Date(fechaFinal);
+    var sd = new Date(fechaInicial);
 
     const result = usuariosPedidos.filter((pedido) => {
       var time = new Date(pedido.fecha).getTime();
-
-      return sd < time && time < ed;
+      return sd > time && time < ed;
     });
 
     //TODO
@@ -127,6 +127,7 @@ const getRecaudaciones = async (req, res = response) => {
     var total = 0;
 
     await result.forEach((pedido) => {
+      //console.log("el tiempo es " + pedido)
       total += pedido.total;
     });
     //return total
@@ -136,6 +137,56 @@ const getRecaudaciones = async (req, res = response) => {
       msg: "Recaudaciones",
       resultados: `${result.length}, Pedidos Entre ${fechaInicial} y ${fechaFinal}`,
       result,
+      totalRecaudacion: total,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+
+//Ingresos (recaudaciones) por períodos de tiempo. Diario / Mensual
+const getRecaudaciones = async (req, res = response) => {
+  try {
+    //console.log(req.query)
+    const { fechaInicial = null, fechaFinal = null } = req.query;
+    const usuarios = await Usuario.find({ estado: true });
+    const usuariosPedidos = []; //Array Con Todos Los Pedidos, De Todos Los Usuarios
+    await usuarios.forEach((user) => {
+      if (user.pedidos.length > 0) {
+        user.pedidos.forEach((pedido) => {
+          usuariosPedidos.push(pedido);
+        });
+      }
+    });
+    //Filtrar Pedidos Entre 2 Fechas
+    var ed = new Date(fechaFinal);
+    var sd = new Date(fechaInicial);
+    //console.log(fechaInicial + " / " + fechaFinal)
+
+    const result = usuariosPedidos.filter((pedido) => {
+      var time = new Date(pedido.fecha).getTime();
+      //console.log("el tiempo es " + time)
+      return sd < time && time < ed;
+    });
+
+    //TODO
+    //Recorrer El Array De Pedidos De Cada Usuario, Sumar Totales De Cada Pedido
+    var total = 0;
+
+    await result.forEach((pedido) => {
+      //console.log("el tiempo es " + pedido)
+      total += pedido.total;
+    });
+    //return total
+    totalGanancias = total / 2;
+
+    res.status(200).json({
+      status: true,
+      msg: "Recaudaciones",
+      resultados: `${result.length}, Pedidos Entre ${fechaInicial} y ${fechaFinal}`,
+      result,
+      totalGanancias,
       totalRecaudacion: total,
     });
   } catch (error) {
@@ -179,4 +230,5 @@ module.exports = {
   getGanancias,
   getRecaudaciones,
   getUltimosPedidos,
+  getRecaudacionesDelDia,
 };

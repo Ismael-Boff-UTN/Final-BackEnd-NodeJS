@@ -4,7 +4,8 @@ const {
   getPedidosUsuarios,
   getRecaudaciones,
   getGanancias,
-  getUltimosPedidos
+  getUltimosPedidos,
+  getRecaudacionesDelDia
 } = require("../controllers/auditController");
 
 const router = Router();
@@ -14,6 +15,8 @@ router.get("/artiuclosMasVendidos", [], getArtiuclosMasVendidos);
 router.get("/pedidosUsuarios", [], getPedidosUsuarios);
 
 router.get("/recaudaciones", [], getRecaudaciones);
+
+router.get("/recaudacionesDelDia", [], getRecaudacionesDelDia);
 
 router.get("/ganancias", [], getGanancias);
 
