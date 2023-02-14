@@ -1,7 +1,13 @@
 const express = require("express");
+const mercadopago = require("mercadopago");
 require("dotenv").config();
 const cors = require("cors");
 const { dbConnection } = require("../database/configdb");
+
+
+
+
+
 
 class Server {
   constructor() {
@@ -22,6 +28,8 @@ class Server {
     await dbConnection();
   }
 
+
+
   middlewares() {
     //CORS
     this.app.use(cors());
@@ -29,6 +37,8 @@ class Server {
     this.app.use(express.json({ limit: "50mb" }));
     this.app.use(express.urlencoded({ extended: "50mb" }));
   }
+
+
   routes() {
     this.app.use("/", require("../routes/default"));
     this.app.use("/api/usuarios", require("../routes/usuarios"));
@@ -44,7 +54,7 @@ class Server {
 
   listen() {
     this.app.listen(this.port, () => {
-      console.log("Server Running On PORT ==> " , this.port);
+      console.log("Server Running On PORT ==> ", this.port);
     });
   }
 }
