@@ -7,31 +7,47 @@ mercadopago.configure({ access_token: process.env.MERCADOPAGO_KEY });
 
 const postPagoMP = async (req, res) => {
     const producto = req.body;
-    console.log(producto );
+    console.log("productos ",producto);
+
+    itemsCarro = [];
+
+    producto.forEach((item) => {
+
+        itemsCarro.push(
+            {
+                id: item._id,
+                quantity: 1,
+                description: "Compra Buen Sabor Restourante",
+                currency_id: "ARS",
+                description: item.denominacion,
+                imagen: item.imagen,
+                category: item.categoria,
+                unit_price: item.precioVenta
+            })
+    });
+
+console.log("items carro  ", itemsCarro)
+
+
+
     let preference = {
-        items: [{
-            id: producto._id,
-            title: producto.denominacion,
-            currency_id: "ARS",
-            picture_url: producto.imagen,
-            description: "Compra Buen Sabor Restourante",
-            catergory_id: producto.categoria,
-            quantity: 1, //producto.cantidad,
-            unit_price: producto.precioVenta,
 
 
-        }],
+        items: itemsCarro,
+
+
         back_urls: {
             success: "http://localhost:3001",
             failure: "",
             pending: "",
         }, auto_return: "approved",
+
         binary_mode: true,
 
 
     }
 
-    mercadopago.preferences.create(preference).then((response)=> res.status(200).send({response})).catch((error)=>res.status(400).send({error: error.message}));
+    mercadopago.preferences.create(preference).then((response) => res.status(200).send({ response })).catch((error) => res.status(400).send({ error: error.message }));
 
 
 }
