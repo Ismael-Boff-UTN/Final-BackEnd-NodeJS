@@ -21,7 +21,7 @@ function emailSend(nombre, apellido, email , fecha, detallesPedido , total) {
 
   let mailOptions = {
     from: config.email,
-    to: "francodellinocente@gmail.com",
+    to: "ismaelbofflopez98@gmail.com",
     subject: "Su pedido se ha facturado",
     text: "",
     html: "<h1> Factura: </h1> </br> <p> Pedido por: " + nombre + " " + apellido + "</p> </br> <p> Fecha: " + fecha + "</p> </br> <p> Detalles: </p></br><p>" + StringArreglo(detallesPedido) + "</p> </br> <p>__________________</p> </br> <p> Total: " + total +"</p>",

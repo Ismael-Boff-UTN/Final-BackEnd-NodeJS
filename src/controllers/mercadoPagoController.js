@@ -37,7 +37,7 @@ console.log("items carro  ", itemsCarro)
 
 
         back_urls: {
-            success: "http://localhost:3001",
+            success: "http://localhost:3001/user-profile",
             failure: "",
             pending: "",
         }, auto_return: "approved",
