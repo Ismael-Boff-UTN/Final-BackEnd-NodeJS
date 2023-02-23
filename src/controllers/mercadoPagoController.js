@@ -7,7 +7,7 @@ mercadopago.configure({ access_token: process.env.MERCADOPAGO_KEY });
 
 const postPagoMP = async (req, res) => {
     const producto = req.body;
-    console.log("productos ",producto);
+
 
     itemsCarro = [];
 
@@ -26,7 +26,7 @@ const postPagoMP = async (req, res) => {
             })
     });
 
-console.log("items carro  ", itemsCarro)
+
 
 
 
@@ -37,11 +37,10 @@ console.log("items carro  ", itemsCarro)
 
 
         back_urls: {
-            success: "http://localhost:3001/user-profile",
+            success: "http://localhost:3002/mp-successpayment",
             failure: "",
             pending: "",
-        }, auto_return: "approved",
-
+        },
         binary_mode: true,
 
 
