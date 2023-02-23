@@ -37,6 +37,10 @@ const IngredienteSchema = Schema({
     type: Object,
     default: true,
   },
+  esIngrediente :{
+    type : Boolean,
+    default : true
+  }
 });
 
 module.exports = model("ingrediente", IngredienteSchema);

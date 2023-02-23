@@ -47,6 +47,7 @@ const postIngrediente = async (req, res = response) => {
       stockActual,
       stockMinimo,
       unidadMedida,
+      esIngrediente,
     } = req.body;
 
     const usuario = req.usuario;
@@ -64,6 +65,7 @@ const postIngrediente = async (req, res = response) => {
       stockMinimo,
       unidadMedida,
       creadoPor,
+      esIngrediente,
     });
 
     await ingrediente.save();
@@ -88,6 +90,7 @@ const putIngrediente = async (req, res = response) => {
       stockMinimo,
       unidadMedida,
       estado,
+      esIngrediente,
     } = req.body;
 
     const usuario = req.usuario;
@@ -106,6 +109,7 @@ const putIngrediente = async (req, res = response) => {
       unidadMedida,
       estado,
       editadoPor,
+      esIngrediente,
     };
 
     const ingrediente = await Ingrediente.findByIdAndUpdate(id, data);
@@ -134,6 +138,7 @@ const putIngredienteDescontar = async (req, res = response) => {
       stockMinimo,
       unidadMedida,
       estado,
+      esIngrediente,
     } = req.body;
 
     const data = {
@@ -145,6 +150,7 @@ const putIngredienteDescontar = async (req, res = response) => {
       stockMinimo,
       unidadMedida,
       estado,
+      esIngrediente,
     };
 
     const ingrediente = await Ingrediente.findByIdAndUpdate(data._id, data);

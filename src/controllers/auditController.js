@@ -7,7 +7,7 @@ const getArtiuclosMasVendidos = async (req, res = response) => {
   try {
     const articulos = await Articulo.find({ estado: true })
       .sort({ cantidadVendido: -1 })
-      .limit(Number(5));
+      .limit(Number(10));
 
     res.status(200).json({
       status: true,
@@ -207,10 +207,14 @@ const getUltimosPedidos = async (req, res = response) => {
       }
     });
 
-    
+
+
     ultimosPedidos = usuariosPedidos
-      .sort((a, b) => b.fecha - a.fecha)
-      .slice(0, 5);
+      //.sort((a, b) => a.fecha < b.fecha)
+      .sort((a, b) => new Date(a.fecha) > new Date(b.fecha))
+    //.slice(0, 5);
+
+
 
     res.status(200).json({
       status: true,

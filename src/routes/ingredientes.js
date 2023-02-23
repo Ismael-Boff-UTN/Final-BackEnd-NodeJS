@@ -24,21 +24,21 @@ router.get("/:id", [validarCampos], getIngredienteByID);
 
 router.post(
   "/",
-  [validarJWT, tieneRole("ADMIN_ROLE"), validarCampos],
+  [validarJWT, tieneRole("ADMIN_ROLE","COCINERO_ROLE"), validarCampos],
   postIngrediente
 );
 
 //UPDATE AN ARTICLE BY ID
 router.put(
   "/:id",
-  [validarJWT, tieneRole("ADMIN_ROLE"), validarCampos],
+  [validarJWT, tieneRole("ADMIN_ROLE","COCINERO_ROLE"), validarCampos],
   putIngrediente
 );
 
 //DELETE ONE ARTICLE BY ID
 router.delete(
   "/:id",
-  [validarJWT, tieneRole("ADMIN_ROLE"), validarCampos],
+  [validarJWT, tieneRole("ADMIN_ROLE","COCINERO_ROLE"), validarCampos],
   deleteIngrediente
 );
 //=================================================

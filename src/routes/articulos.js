@@ -20,7 +20,7 @@ const router = Router();
 router.get("/", [validarCampos], getArticulos);
 router.get(
   "/admin",
-  [validarJWT, tieneRole("ADMIN_ROLE"), validarCampos],
+  [validarJWT, tieneRole("ADMIN_ROLE","COCINERO_ROLE"), validarCampos],
   getArticulosAdmin
 );
 
@@ -44,7 +44,7 @@ router.post(
   "/",
   [
     validarJWT,
-    tieneRole("ADMIN_ROLE"),
+    tieneRole("ADMIN_ROLE","COCINERO_ROLE"),
     check("denominacion", "La Denominacion Es Obligtoria").not().isEmpty(),
     check("imagen", "La Imagen Es Obligtoria").not().isEmpty(),
     check("tiempoEstimadoCocina", "El Tiempo De Coccion Es Obligtorio")
@@ -61,7 +61,7 @@ router.put(
   "/:id",
   [
     validarJWT,
-    tieneRole("ADMIN_ROLE"),
+    tieneRole("ADMIN_ROLE","COCINERO_ROLE"),
     check("id", "No Es Un ID Valido De Mongo").isMongoId(),
     check("id").custom(existeIDArticulo),
     check("denominacion", "La Denominacion Es Obligtoria").not().isEmpty(),
@@ -81,7 +81,7 @@ router.delete(
   "/:id",
   [
     validarJWT,
-    tieneRole("ADMIN_ROLE"),
+    tieneRole("ADMIN_ROLE","COCINERO_ROLE"),
     check("id", "No Es Un ID Valido De Mongo").isMongoId(),
     check("id").custom(existeIDArticulo),
     validarCampos,

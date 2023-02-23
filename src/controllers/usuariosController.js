@@ -6,6 +6,8 @@ const Ingredientes = require("../models/ingrediente");
 const bcryptjs = require("bcrypt");
 const { esEmailvalido } = require("../helpers/db-validadores");
 const { v4: uuidv4 } = require("uuid");
+const { sumarVendido } = require("../controllers/articulosController");
+const articulo = require("../models/articulo");
 
 //FUNCION GET DE USUARIOS
 const getUsuarios = async (req, res = response) => {
@@ -172,12 +174,12 @@ const putIngredienteDescontar = async (req) => {
 //Añadir Pedido a Usuario
 const addPedidoUsuario = async (req, res = response) => {
   try {
-    //console.log(req.body)
+
     const { id } = req.params;
-    const { tipoPago, tipoEnvio, domicilio} = req.body;
+    const { tipoPago, tipoEnvio, domicilio } = req.body;
     const detalles = req.body.items;
     var idp = uuidv4();
-    const usuario =  await Usuario.findByIdAndUpdate(id);
+    const usuario = await Usuario.findByIdAndUpdate(id);
     const ingredientes = await Ingredientes.find({ estado: true });
 
     var totalPrecio = 0;
@@ -185,8 +187,8 @@ const addPedidoUsuario = async (req, res = response) => {
       totalPrecio += item.precioUnitario * item.cantidad;
     });
 
-    if(tipoEnvio=="Retiro"){
-      totalPrecio = totalPrecio - (totalPrecio*0.10);
+    if (tipoEnvio == "Retiro") {
+      totalPrecio = totalPrecio - (totalPrecio * 0.10);
     }
 
     const pedido = new Pedido({
@@ -203,19 +205,40 @@ const addPedidoUsuario = async (req, res = response) => {
 
     //descontamos stock
     detalles.forEach((art) => {
-      if(art.articulo.esManufacturado==true){
+      if (art.articulo.esManufacturado == true) {
         art.articulo.articuluManufacturadoDetalle.forEach((item) => {
           var ingredienteAModificar = new Ingredientes;
           ingredientes.forEach((ing) => {
-              if (String(ing._id) === String(item.ingredient._id)) {
-                  ingredienteAModificar=ing
-                  ingredienteAModificar.stockActual=ingredienteAModificar.stockActual-(item.cantidad*art.cantidad);
-                  putIngredienteDescontar(ingredienteAModificar);   
-              }
+            if (String(ing._id) === String(item.ingredient._id)) {
+              ingredienteAModificar = ing
+              ingredienteAModificar.stockActual = ingredienteAModificar.stockActual - (item.cantidad * art.cantidad);
+              putIngredienteDescontar(ingredienteAModificar);
+              sumarVendido(art.articulo._id, art.cantidad)
+            }
           });
+        });
+      } else {
+
+
+        var ingredienteAModificar = new Ingredientes;
+        ingredientes.forEach((ing) => {
+          if (String(ing.denominacion) === String(art.articulo.denominacion)) {
+            ingredienteAModificar = ing
+            ingredienteAModificar.stockActual = ingredienteAModificar.stockActual - (art.cantidad);
+            putIngredienteDescontar(ingredienteAModificar);
+            sumarVendido(art.articulo._id, art.cantidad)
+
+          }
         });
       }
     });
+
+
+
+
+
+
+
 
     await Usuario.findByIdAndUpdate(id, { $push: { pedidos: pedido } });
 

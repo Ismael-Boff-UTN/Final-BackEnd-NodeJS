@@ -43,7 +43,7 @@ const ArticuloManufacturadoSchema = Schema({
     type: Object,
     default: true,
   },
-  cantidadVenido: {
+  cantidadVendido: {
     type: Number,
     default: 0,
   },

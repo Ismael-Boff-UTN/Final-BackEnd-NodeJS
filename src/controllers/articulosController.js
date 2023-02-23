@@ -1,6 +1,7 @@
 const { response } = require("express");
 const { subirImagenCloudinary } = require("../helpers/subir-archivo");
 const Articulo = require("../models/articulo");
+const Ingrediente = require("../models/ingrediente");
 
 const getArticulos = async (req, res = response) => {
   try {
@@ -88,7 +89,7 @@ const postArticulo = async (req, res = response) => {
         articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
       };
 
-      
+
       const articulo = new Articulo({
         tiempoEstimadoCocina,
         denominacion,
@@ -100,7 +101,11 @@ const postArticulo = async (req, res = response) => {
         categoria,
       });
 
+
+      
+
       await articulo.save();
+    
       res.status(200).json({
         status: true,
         msg: "Articulo Creado",
@@ -117,7 +122,18 @@ const postArticulo = async (req, res = response) => {
         categoria,
       });
 
+      const ingredienteProducto = new Ingrediente({
+        denominacion: articulo.denominacion,
+        precioCompra: articulo.precioVenta - 50,
+        precioVenta: articulo.precioVenta,
+        stockActual: 999,
+        stockMinimo: 1,
+        unidadMedida: "unidad",
+        esIngrediente: false
+      })
+
       await articulo.save();
+      await ingredienteProducto.save();
       res.status(200).json({
         status: true,
         msg: "Articulo Creado",
@@ -139,6 +155,7 @@ const putArticulo = async (req, res = response) => {
       imagen,
       esManufacturado,
       categoria,
+      cantidadVendido
     } = req.body;
 
     const imgCloudinary = await subirImagenCloudinary(
@@ -154,6 +171,7 @@ const putArticulo = async (req, res = response) => {
       articuluManufacturadoDetalle: req.body.articuluManufacturadoDetalle,
       esManufacturado,
       categoria,
+      cantidadVendido
     };
 
     await Articulo.findByIdAndUpdate(id, data);
@@ -198,6 +216,23 @@ const deleteArticulo = async (req, res = response) => {
     res.status(400).json({ error });
   }
 };
+const sumarVendido = async (id, cantidad) => {
+
+  //Buscamos El Articulo En Cuestion
+  const buscarArticulo = await Articulo.findById(id);
+
+  //Obtenemos la cantidad de veces que se vendio
+  cantidadActual = buscarArticulo.cantidadVendido;
+
+  //sumamos la nueva cantidad de ventas a la anterior
+  await Articulo.findByIdAndUpdate(id, {
+    cantidadVendido: cantidadActual + cantidad,
+  })
+
+
+
+
+};
 
 module.exports = {
   getArticulos,
@@ -206,4 +241,5 @@ module.exports = {
   postArticulo,
   putArticulo,
   deleteArticulo,
+  sumarVendido
 };
