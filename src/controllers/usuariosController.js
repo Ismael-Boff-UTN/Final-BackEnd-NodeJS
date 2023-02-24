@@ -4,10 +4,10 @@ const Usuario = require("../models/usuario");
 const Pedido = require("../models/pedido");
 const Ingredientes = require("../models/ingrediente");
 const bcryptjs = require("bcrypt");
-const { esEmailvalido } = require("../helpers/db-validadores");
+//const { esEmailvalido } = require("../helpers/db-validadores");
 const { v4: uuidv4 } = require("uuid");
 const { sumarVendido } = require("../controllers/articulosController");
-const articulo = require("../models/articulo");
+//const articulo = require("../models/articulo");
 
 //FUNCION GET DE USUARIOS
 const getUsuarios = async (req, res = response) => {
@@ -203,7 +203,7 @@ const addPedidoUsuario = async (req, res = response) => {
       domicilioEnvio: domicilio,
     });
 
-    //descontamos stock
+    //descontamos stock y actualizamos atributo cantidad de veces vendido
     detalles.forEach((art) => {
       if (art.articulo.esManufacturado == true) {
         art.articulo.articuluManufacturadoDetalle.forEach((item) => {
@@ -218,8 +218,6 @@ const addPedidoUsuario = async (req, res = response) => {
           });
         });
       } else {
-
-
         var ingredienteAModificar = new Ingredientes;
         ingredientes.forEach((ing) => {
           if (String(ing.denominacion) === String(art.articulo.denominacion)) {
@@ -232,13 +230,6 @@ const addPedidoUsuario = async (req, res = response) => {
         });
       }
     });
-
-
-
-
-
-
-
 
     await Usuario.findByIdAndUpdate(id, { $push: { pedidos: pedido } });
 

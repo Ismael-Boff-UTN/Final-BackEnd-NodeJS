@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
 const {
-    getPedidos,
+    //getPedidos,
     getPedidosCocinero,
     putPedidos,
     getPedidosDelivery,
@@ -9,11 +9,7 @@ const {
     getPedidosCajaAdmision,
 } = require("../controllers/pedidoController");
 const { validarCampos } = require("../middlewares/validarCampos");
-const {
-  esRolValido,
-  esEmailvalido,
-  existeIDUsuario,
-} = require("../helpers/db-validadores");
+//const {esRolValido,esEmailvalido,existeIDUsuario,} = require("../helpers/db-validadores");
 const { validarJWT } = require("../middlewares/validar-jwt");
 const { tieneRole } = require("../middlewares/validar-roles");
 

@@ -1,13 +1,13 @@
 //Imports
 const { response } = require("express");
-const Detalle = require("../models/detallesPedido");
+//const Detalle = require("../models/detallesPedido");
 const Pedido = require("../models/pedido");
 const Usuario = require("../models/usuario");
-const nodemailer = require("nodeMailer");
-const bcryptjs = require("bcrypt");
+//const nodemailer = require("nodeMailer");
+//const bcryptjs = require("bcrypt");
 const { esEmailvalido } = require("../helpers/db-validadores");
-const { v4: uuidv4 } = require("uuid");
-const config = require("../private/emailData.json");
+//const { v4: uuidv4 } = require("uuid");
+//const config = require("../private/emailData.json");
 const emailSend = require("../helpers/emailSender")
 
 //FUNCION GET DE PEDIDOS

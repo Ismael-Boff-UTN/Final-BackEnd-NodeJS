@@ -1,5 +1,5 @@
 const express = require("express");
-const mercadopago = require("mercadopago");
+//const mercadopago = require("mercadopago");
 require("dotenv").config();
 const cors = require("cors");
 const { dbConnection } = require("../database/configdb");
