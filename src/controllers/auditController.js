@@ -4,6 +4,8 @@ const Usuario = require("../models/usuario");
 
 //Ranking comidas más pedidas en un periodo de tiempo determinado
 const getArtiuclosMasVendidos = async (req, res = response) => {
+
+
   try {
     const articulos = await Articulo.find({ estado: true })
       .sort({ cantidadVendido: -1 })
@@ -14,6 +16,37 @@ const getArtiuclosMasVendidos = async (req, res = response) => {
       msg: "Articulos Mas Vendidos Obtenidos",
       totalRegistros: articulos.length,
       articulos,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error });
+  }
+};
+
+//Ranking comidas más pedidas en un periodo de tiempo determinado
+const getArtiuclosMasVendidosByDate = async (req, res = response) => {
+  try {
+    //console.log(req.query)
+    const { fechaInicial = null, fechaFinal = null } = req.query;
+
+
+
+    const articulos = await Articulo.find({
+      estado: true,
+      lastSale: { $gte: fechaInicial },
+      lastSale: { $lte: fechaFinal }
+
+    })
+      .sort({ cantidadVendido: -1 })
+    //.limit(Number(10));
+
+    res.status(200).json({
+      status: true,
+
+      cantidad: articulos.length,
+      articulos
+
+
     });
   } catch (error) {
     console.log(error);
@@ -63,11 +96,11 @@ const getGanancias = async (req, res = response) => {
       }
     });
     //Filtrar Pedidos Entre 2 Fechas
-    var ed = new Date(fechaFinal).getTime();
-    var sd = new Date(fechaInicial).getTime();
+    var ed = Date.parse(fechaFinal);
+    var sd = Date.parse(fechaInicial);
 
     const result = usuariosPedidos.filter((pedido) => {
-      var time = new Date(pedido.fecha).getTime();
+      var time = Date.parse(pedido.fecha);
 
       return sd < time && time < ed;
     });
@@ -160,12 +193,12 @@ const getRecaudaciones = async (req, res = response) => {
       }
     });
     //Filtrar Pedidos Entre 2 Fechas
-    var ed = new Date(fechaFinal);
-    var sd = new Date(fechaInicial);
-    //console.log(fechaInicial + " / " + fechaFinal)
+    var ed = Date.parse(fechaFinal);
+    var sd = Date.parse(fechaInicial);
+    //console.log("fecha del front ",fechaInicial + " / " + fechaFinal)
 
     const result = usuariosPedidos.filter((pedido) => {
-      var time = new Date(pedido.fecha).getTime();
+      var time = Date.parse(pedido.fecha);
       //console.log("el tiempo es " + time)
       return sd < time && time < ed;
     });
@@ -209,10 +242,8 @@ const getUltimosPedidos = async (req, res = response) => {
 
 
 
-    ultimosPedidos = usuariosPedidos
-      //.sort((a, b) => a.fecha < b.fecha)
-      .sort((a, b) => new Date(a.fecha) > new Date(b.fecha))
-    //.slice(0, 5);
+    ultimosPedidos = await usuariosPedidos.sort((a, b) => Date.parse(b.fecha) - Date.parse(a.fecha))
+
 
 
 
@@ -235,4 +266,5 @@ module.exports = {
   getRecaudaciones,
   getUltimosPedidos,
   getRecaudacionesDelDia,
+  getArtiuclosMasVendidosByDate
 };

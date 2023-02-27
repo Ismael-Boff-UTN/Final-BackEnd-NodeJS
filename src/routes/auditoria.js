@@ -5,12 +5,15 @@ const {
   getRecaudaciones,
   getGanancias,
   getUltimosPedidos,
-  getRecaudacionesDelDia
+  getRecaudacionesDelDia,
+  getArtiuclosMasVendidosByDate
 } = require("../controllers/auditController");
 
 const router = Router();
 
 router.get("/artiuclosMasVendidos", [], getArtiuclosMasVendidos);
+
+router.get("/artiuclosMasVendidosByDate", [], getArtiuclosMasVendidosByDate);
 
 router.get("/pedidosUsuarios", [], getPedidosUsuarios);
 
