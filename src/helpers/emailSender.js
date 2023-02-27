@@ -1,12 +1,12 @@
 const nodemailer = require("nodeMailer");
-const config = require("../private/emailData.json");
+
 
 function emailSend(nombre, apellido, email , fecha, detallesPedido , total) {
   let transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: config.email,
-      pass: config.password,
+      user: process.env.NODEMAIL_EMAIL,
+      pass: process.env.NODEMAIL_PASSWORD,
     },
   });
 
@@ -20,8 +20,8 @@ function emailSend(nombre, apellido, email , fecha, detallesPedido , total) {
   }
 
   let mailOptions = {
-    from: config.email,
-    to: "ismaelbofflopez98@gmail.com",
+    from: process.env.NODEMAIL_EMAIL,
+    to: "ismaelbofflopez98@gmail.com",   //Aca se pasaria atributo email
     subject: "Su pedido se ha facturado",
     text: "",
     html: "<h1> Factura: </h1> </br> <p> Pedido por: " + nombre + " " + apellido + "</p> </br> <p> Fecha: " + fecha + "</p> </br> <p> Detalles: </p></br><p>" + StringArreglo(detallesPedido) + "</p> </br> <p>__________________</p> </br> <p> Total: " + total +"</p>",

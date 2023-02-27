@@ -102,10 +102,10 @@ const postArticulo = async (req, res = response) => {
       });
 
 
-      
+
 
       await articulo.save();
-    
+
       res.status(200).json({
         status: true,
         msg: "Articulo Creado",
@@ -216,6 +216,8 @@ const deleteArticulo = async (req, res = response) => {
     res.status(400).json({ error });
   }
 };
+
+
 const sumarVendido = async (id, cantidad) => {
 
   //Buscamos El Articulo En Cuestion
@@ -234,6 +236,24 @@ const sumarVendido = async (id, cantidad) => {
 
 };
 
+const actualizarUltimaVenta = async (id) => {
+
+
+  fechaActual = new Date();
+
+
+
+  //sumamos la nueva cantidad de ventas a la anterior
+  await Articulo.findByIdAndUpdate(id, {
+    lastSale: fechaActual,
+
+  })
+
+
+
+
+};
+
 module.exports = {
   getArticulos,
   getArticulosAdmin,
@@ -241,5 +261,6 @@ module.exports = {
   postArticulo,
   putArticulo,
   deleteArticulo,
-  sumarVendido
+  sumarVendido,
+  actualizarUltimaVenta
 };

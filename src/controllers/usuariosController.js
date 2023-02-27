@@ -6,8 +6,8 @@ const Ingredientes = require("../models/ingrediente");
 const bcryptjs = require("bcrypt");
 //const { esEmailvalido } = require("../helpers/db-validadores");
 const { v4: uuidv4 } = require("uuid");
-const { sumarVendido } = require("../controllers/articulosController");
-//const articulo = require("../models/articulo");
+const { sumarVendido, actualizarUltimaVenta } = require("../controllers/articulosController");
+const Articulo = require("../models/articulo");
 
 //FUNCION GET DE USUARIOS
 const getUsuarios = async (req, res = response) => {
@@ -214,6 +214,8 @@ const addPedidoUsuario = async (req, res = response) => {
               ingredienteAModificar.stockActual = ingredienteAModificar.stockActual - (item.cantidad * art.cantidad);
               putIngredienteDescontar(ingredienteAModificar);
               sumarVendido(art.articulo._id, art.cantidad)
+              //Actualizamos La ultima vez que se vendio el articulo
+              actualizarUltimaVenta(art.articulo._id)
             }
           });
         });
@@ -225,7 +227,8 @@ const addPedidoUsuario = async (req, res = response) => {
             ingredienteAModificar.stockActual = ingredienteAModificar.stockActual - (art.cantidad);
             putIngredienteDescontar(ingredienteAModificar);
             sumarVendido(art.articulo._id, art.cantidad)
-
+            //Actualizamos La ultima vez que se vendio el articulo
+            actualizarUltimaVenta(art.articulo._id)
           }
         });
       }
