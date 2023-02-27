@@ -2,12 +2,12 @@
   "name": "restapi-nodejs",
   "version": "1.0.0",
   "description": "RestAPI Para EL Buen Sabor",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "dev": "nodemon src/app.js",
     "start": "node src/app.js"
   },
-  "author": "",
+  "author": "Ismael Boff Lopez",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
